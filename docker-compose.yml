@@ -30,5 +30,19 @@ services:
     volumes:
       - db-restore:/app/data
 
+  db-seed:
+    build:
+      context: .
+    command: python db-seed/seed.py
+    profiles: [seed]
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    env_file:
+      - db-seed/.env
+    environment:
+      PYTHONUNBUFFERED: "1"
+      HOST_MACHINE_NAME: ${HOST_MACHINE_NAME}
+
 volumes:
   db-restore:
