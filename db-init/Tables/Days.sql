@@ -1,0 +1,22 @@
+CREATE TABLE [Days] (
+    [CalendarDate] DATE NOT NULL,
+    [CalendarYear] INT NOT NULL,
+    [CalendarQuarter] INT NOT NULL,
+    [CalendarMonth] INT NOT NULL,
+    [MonthName] VARCHAR(20) NOT NULL,
+    [DayOfMonth] INT NOT NULL,
+    [DayOfYear] INT NOT NULL,
+    [DayOfWeek] INT NOT NULL,
+    [DayName] VARCHAR(20) NOT NULL,
+    [WeekOfYear] INT NOT NULL,
+    [IsoWeek] INT NOT NULL,
+    [IsWeekend] BIT NOT NULL,
+    [IsWeekday] BIT NOT NULL,
+    [IsMonthStart] BIT NOT NULL,
+    [IsMonthEnd] BIT NOT NULL,
+    [IsQuarterStart] BIT NOT NULL,
+    [IsQuarterEnd] BIT NOT NULL,
+    [IsYearStart] BIT NOT NULL,
+    [IsYearEnd] BIT NOT NULL,
+    PRIMARY KEY CLUSTERED ([CalendarDate] ASC)
+)

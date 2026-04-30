@@ -1,0 +1,10 @@
+CREATE TABLE [Users] (
+    [UsersId] UNIQUEIDENTIFIER NOT NULL,
+    [Username] NVARCHAR(100) NOT NULL,
+    [Email] NVARCHAR(255) NOT NULL,
+    [FirstName] NVARCHAR(100) NOT NULL,
+    [LastName] NVARCHAR(100) NOT NULL,
+    CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED ([UsersId]),
+    CONSTRAINT [UQ_Users_Username] UNIQUE NONCLUSTERED ([Username]),
+    CONSTRAINT [UQ_Users_Name] UNIQUE NONCLUSTERED ([FirstName], [LastName])
+);

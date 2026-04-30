@@ -12,3 +12,23 @@ services:
       timeout: 5s
       retries: 10
       start_period: 30s
+
+  db-init:
+    build:
+      context: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PYTHONUNBUFFERED: "1"
+      DOCKER_DB_USERNAME: ${DOCKER_DB_USERNAME}
+      DOCKER_DB_PASSWORD: ${DOCKER_DB_PASSWORD}
+      DOCKER_DB_IP: ${DOCKER_DB_IP}
+      DOCKER_DB_INTERNAL_PORT: ${DOCKER_DB_INTERNAL_PORT}
+      DOCKER_DB_EXTERNAL_PORT: ${DOCKER_DB_EXTERNAL_PORT}
+
+    volumes:
+      - db-restore:/app/data
+
+volumes:
+  db-restore:

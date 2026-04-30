@@ -1,0 +1,10 @@
+CREATE TABLE [Image] (
+    [UsersId] UNIQUEIDENTIFIER NULL,
+    [ImageId] UNIQUEIDENTIFIER NOT NULL,
+    [FileName] NVARCHAR(850) NOT NULL,
+    [FileType] NVARCHAR(10) NOT NULL,
+    CONSTRAINT [PK_Image] PRIMARY KEY NONCLUSTERED ([ImageId]),
+    CONSTRAINT [FK_Image_Users] FOREIGN KEY ([UsersId]) REFERENCES [Users]([UsersId]) ON DELETE SET NULL
+);
+
+CREATE CLUSTERED INDEX [IX_Image_Users] ON [Image] ([UsersId], [FileName]);
