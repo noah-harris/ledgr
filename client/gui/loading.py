@@ -1,0 +1,22 @@
+import tkinter as tk
+
+class LoadingWindow:
+    def __init__(self, master, message="Loading..."):
+        self.master = master
+        self.message = message
+        self.window = tk.Toplevel(master)
+        self.window.title("Loading")
+        self.window.state("zoomed")
+        self.window.resizable(False, False)
+        self.label = tk.Label(self.window, text=message)
+        self.label.pack(expand=True)
+        self.window.transient(self.master)
+        self.window.grab_set()
+        self.window.update()
+
+    def __enter__(self):
+        self.window.deiconify()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.window.destroy()

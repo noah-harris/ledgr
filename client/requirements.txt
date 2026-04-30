@@ -1,0 +1,9 @@
+sqlalchemy
+pandas
+pyodbc
+python-dotenv
+pywin32
+Pillow
+PyMuPDF
+colorlog
+requests
