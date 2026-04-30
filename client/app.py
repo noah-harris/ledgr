@@ -14,7 +14,7 @@ class App(tk.Tk):
 
     def __init__(self):
         super().__init__()
-        self.title("Budget Tool v1.0.0.0")
+        self.title("Ledgr v1.0.0.0")
         self.state('zoomed')
 
         frame = ttk.Frame(self)
