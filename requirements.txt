@@ -1,0 +1,6 @@
+sqlalchemy
+pandas
+pyodbc
+colorlog
+python-dotenv
+requests
