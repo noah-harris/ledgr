@@ -1,5 +1,4 @@
 db-seed/.env
-start_client_noah.ps1
 db-seed/local.py
 db-seed/SeedDataInsert.sql
 db-seed/SeedDataUpdate.sql
