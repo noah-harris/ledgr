@@ -152,7 +152,7 @@ class InvoiceManager(Tool):
             is_null = False
         if is_null or str(image_id).upper() in ("NONE", NO_IMAGE_ID.upper()):
             return None
-        with get_connection() as conn:
+        with get_connection("ldr") as conn:
             img_df = pd.read_sql_query(
                 text("SELECT [ImageFileName] FROM [v_Image] WHERE [ImageId] = :image_id"),
                 conn, params={"image_id": image_id}

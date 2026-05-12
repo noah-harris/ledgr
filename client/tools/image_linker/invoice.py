@@ -51,7 +51,7 @@ class Invoice(Modal):
 
         def _select_invoice_template(event):
             template_name = self._invoice_template_name_var.get()
-            with get_connection() as conn:
+            with get_connection("ldr") as conn:
                 invoice_template_items = pd.read_sql_query(text("SELECT [DisplayOrder] AS [#], [CategoryDisplayName] AS [Category], [Description], [Quantity], [Amount] FROM [v_InvoiceTemplateItem] WHERE [InvoiceTemplateName] = :template_name ORDER BY [#]"), conn, params={"template_name": template_name})
             self.invoice_item_table.data = invoice_template_items
             self.invoice_form.amount = round(Decimal(str(pd.to_numeric(self.invoice_item_table.data["Amount"], errors="coerce").fillna(0).sum())), 2)
@@ -173,7 +173,7 @@ class Invoice(Modal):
                 messagebox.showerror("Unspecified amount","Please specify Invoice Total Amount")
                 return None
             
-            with get_connection() as conn:
+            with get_connection("ldr") as conn:
                 data.insert_invoice(conn, invoice_data, invoice_items)
                 data.update_image_sort(conn, self.current_image_id, 'INVOICE', 'c')
 

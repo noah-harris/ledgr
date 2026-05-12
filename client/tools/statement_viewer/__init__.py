@@ -7,7 +7,8 @@ from functools import cached_property
 from gui import Table, ImageViewer
 from tools import Tool
 from config import *
-
+from resolve_image_bytes import resolve_image_bytes
+from pathlib import Path
 
 class StatementViewer(Tool):
 
@@ -63,7 +64,8 @@ class StatementViewer(Tool):
         self.statement_item_table.data = self.statement_item_data
         filename = self.image_path
         if filename:
-            img_bytes = fetch_image_bytes(filename)
+            # img_bytes = fetch_image_bytes(filename)
+            img_bytes = resolve_image_bytes(f"{IMAGE_DIRECTORY}/{filename}")
             if img_bytes:
                 self.image_viewer.load_from_bytes(img_bytes, Path(filename).suffix.lstrip("."), Path(filename).stem)
             else:
@@ -149,7 +151,7 @@ class StatementViewer(Tool):
 
     @cached_property
     def account_options(self):
-        with get_connection() as conn:
+        with get_connection("ldr") as conn:
             data = pd.read_sql_query(
                 text("SELECT [AccountId], [AccountDisplayName] FROM [v_Account] ORDER BY [AccountDisplayName]"),
                 conn,
@@ -158,7 +160,7 @@ class StatementViewer(Tool):
 
     @cached_property
     def statement_options(self):
-        with get_connection() as conn:
+        with get_connection("ldr") as conn:
             data = pd.read_sql_query(
                 text("""
                     SELECT
@@ -202,7 +204,7 @@ class StatementViewer(Tool):
 
     @property
     def statement_data(self):
-        with get_connection() as conn:
+        with get_connection("ldr") as conn:
             data = pd.read_sql_query(
                 text("""
                     SELECT
@@ -228,7 +230,7 @@ class StatementViewer(Tool):
 
     @property
     def statement_item_data(self):
-        with get_connection() as conn:
+        with get_connection("ldr") as conn:
             data = pd.read_sql_query(
                 text("""
                     SELECT

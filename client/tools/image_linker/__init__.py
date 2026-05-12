@@ -13,6 +13,7 @@ from db import get_connection
 from sqlalchemy import text
 from ..statement_loader import StatementLoader
 from models import Image
+from resolve_image_bytes import resolve_image_bytes
 
 class ImageLinker(Tool):
 
@@ -44,7 +45,7 @@ class ImageLinker(Tool):
             if filename:
                 record["filetype"] = Path(filename).suffix.lstrip(".")
                 record["filename_stem"] = Path(filename).stem
-                record["get_bytes"] = (lambda fn: lambda: fetch_image_bytes(fn))(filename)
+                record["get_bytes"] = (lambda fn: lambda: resolve_image_bytes(f"{IMAGE_DIRECTORY}/{fn}"))(filename)
             else:
                 record["filetype"] = None
                 record["filename_stem"] = None
@@ -69,13 +70,13 @@ class ImageLinker(Tool):
     def sort_button_frame(self):
         
         def _handle_orphan():
-            with get_connection() as conn:
+            with get_connection("ldr") as conn:
                 conn.execute(text("UPDATE [ImageSort] SET [StatusType] = 'o' WHERE [ImageId] = :image_id"), {"image_id": self.image_viewer.info["ImageId"]})
             logger.debug("Image marked as orphan")
             self._remove_image()
 
         def _handle_skip():
-            with get_connection() as conn:
+            with get_connection("ldr") as conn:
                 conn.execute(text("UPDATE [ImageSort] SET [StatusType] = 's' WHERE [ImageId] = :image_id"), {"image_id": self.image_viewer.info["ImageId"]})
             logger.debug("Image marked as skipped")
             self._remove_image()

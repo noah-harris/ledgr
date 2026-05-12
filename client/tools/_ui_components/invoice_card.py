@@ -5,7 +5,7 @@ from pathlib import Path
 from gui import ImageViewer, Table, get_image_size_from_bytes
 from color import *
 from .statement_item_card import StatementItemCard
-
+from resolve_image_bytes import resolve_image_bytes
 
 class InvoiceCard(tk.Frame):
     def __init__(self, master, invoice:Invoice, show_receipts:bool=True):
@@ -99,7 +99,8 @@ class InvoicePanel(tk.Frame):
     
 
     def _image(self, invoice: Invoice):
-        img_bytes = fetch_image_bytes(invoice.ImageFileName)
+        # img_bytes = fetch_image_bytes(invoice.ImageFileName)
+        img_bytes = resolve_image_bytes(f"{IMAGE_DIRECTORY}/{invoice.ImageFileName}")
         if img_bytes is None:
             image = ImageViewer(self, show_nav_buttons=False)
             image.show_placeholder("Image unavailable")

@@ -28,7 +28,7 @@ class UsersCreator(Tool):
 
         try:
             df = pd.DataFrame([user_data])
-            with get_connection() as conn:
+            with get_connection("ldr") as conn:
                 df.to_sql("Users", conn, if_exists="append", index=False)
             messagebox.showinfo("Success", "User created successfully!")
             self.destroy()
