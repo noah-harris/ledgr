@@ -6,11 +6,6 @@ IMAGE ID CONVERSION - I messed up and stripped non alphanumeric characters from 
 In windows its unique based on LOWER(FileName.FileType) so we can just hash the original filename and filetype to get the correct image ids.
 ==================================================
 */
-IF (SELECT COUNT(*) FROM [ldr].[dbo].[Currency]) > 0
-BEGIN
-	PRINT 'Tables already have data. Skipping seeding.'
-	RETURN
-END
 
 DROP TABLE IF EXISTS [import].[image]
 SELECT 
