@@ -3,6 +3,7 @@ import tkinter as tk
 from config import *
 from gui import ImageViewer
 from color import *
+from resolve_image_bytes import resolve_image_bytes
 
 class StatementItemCard(tk.Frame):
     def __init__(self, master, statement_item:StatementItem):
@@ -27,7 +28,9 @@ class StatementItemCard(tk.Frame):
         window = tk.Toplevel(self)
         window.title("Receipt Image")
         viewer = ImageViewer(window, show_nav_buttons=False)
-        img_bytes = fetch_image_bytes(self._statement_item.ImageFileName)
+        # img_bytes = fetch_image_bytes(self._statement_item.ImageFileName)
+        img_bytes = resolve_image_bytes(f"{IMAGE_DIRECTORY}/{self._statement_item.ImageFileName}")
+
         if img_bytes is None:
             viewer.show_placeholder("Image unavailable")
         else:

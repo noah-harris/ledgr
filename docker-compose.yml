@@ -3,9 +3,9 @@ services:
     image: mcr.microsoft.com/mssql/server:2025-latest
     environment:
       ACCEPT_EULA: "Y"
-      SA_PASSWORD: "${DOCKER_DB_PASSWORD}"
+      SA_PASSWORD: "${DB_PASSWORD}"
     ports:
-      - "${DOCKER_DB_EXTERNAL_PORT}:${DOCKER_DB_INTERNAL_PORT}"
+      - "${EXTERNAL_PORT}:${INTERNAL_PORT}"
     healthcheck:
       test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$SA_PASSWORD\" -Q \"SELECT 1\" -b -No"]
       interval: 10s
@@ -13,36 +13,47 @@ services:
       retries: 10
       start_period: 30s
 
-  db-init:
-    build:
-      context: .
+  init-db:
+    image: noahharriscontact/db-deployer-initializer:latest
+    healthcheck:
+      test: ["CMD-SHELL", "grep -q '\"status\": \"ready\"' /app/sql-scripts/status.json"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
     depends_on:
       db:
         condition: service_healthy
     environment:
-      PYTHONUNBUFFERED: "1"
-      DOCKER_DB_USERNAME: ${DOCKER_DB_USERNAME}
-      DOCKER_DB_PASSWORD: ${DOCKER_DB_PASSWORD}
-      DOCKER_DB_IP: ${DOCKER_DB_IP}
-      DOCKER_DB_INTERNAL_PORT: ${DOCKER_DB_INTERNAL_PORT}
-      DOCKER_DB_EXTERNAL_PORT: ${DOCKER_DB_EXTERNAL_PORT}
+      HOST: ${HOST}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      EXTERNAL_PORT: ${EXTERNAL_PORT}
+      INTERNAL_PORT: ${INTERNAL_PORT}
+      DIALECT: ${DIALECT}
+      
+      IMAGE_DIRECTORY: ${IMAGE_DIRECTORY}
+
+      BUDGET_TOOL_USERNAME: ${BUDGET_TOOL_USERNAME}
+      BUDGET_TOOL_PASSWORD: ${BUDGET_TOOL_PASSWORD}
+      BUDGET_TOOL_HOST: ${BUDGET_TOOL_HOST}
+      BUDGET_TOOL_PORT: ${BUDGET_TOOL_PORT}
 
     volumes:
-      - db-restore:/app/data
-
-  db-seed:
-    build:
-      context: .
-    command: python db-seed/seed.py
-    profiles: [seed]
-    depends_on:
-      db-init:
-        condition: service_completed_successfully
-    env_file:
-      - db-seed/.env
-    environment:
-      PYTHONUNBUFFERED: "1"
-      HOST_MACHINE_NAME: ${HOST_MACHINE_NAME}
+      - restore:/app/restore
+      - sql-scripts:/app/sql-scripts
 
 volumes:
-  db-restore:
+  restore:
+    driver: local
+    driver_opts:
+      type: ${TYPE}
+      device: "${RESTORE_POINT_DIRECTORY}"
+      o:  ${O}
+
+  sql-scripts:
+    driver: local
+    driver_opts:
+      type: ${TYPE}
+      device: "${SQL_PROJECT_DIRECTORY}"
+      o: ${O}

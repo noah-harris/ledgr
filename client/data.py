@@ -6,60 +6,60 @@ from tkinter import messagebox
 
 # THis temp
 def get_payee_id(name:str) -> str | None:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         df = pd.read_sql_query(text("SELECT [PayeeId] FROM [v_Payee] WHERE [PayeeName] = :name"), conn, params={"name": name})
         return df["PayeeId"].iloc[0] if not df.empty else None
-    
+
 
 def get_category_id(name:str) -> str | None:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         df = pd.read_sql_query(text("SELECT [CategoryId] FROM [v_InvoiceItemCategory] WHERE [CategoryDisplayName] = :name"), conn, params={"name": name})
         return df["CategoryId"].iloc[0] if not df.empty else None
 
 
 # SELECT DATA
 def Invoice() -> pd.DataFrame:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [Invoice]", conn)
 
 def InvoiceItem() -> pd.DataFrame:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [InvoiceItem]", conn)
 
 def Account() -> pd.DataFrame:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [v_Account]", conn)
 
 def Payee() -> pd.DataFrame:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [v_Payee] ORDER BY [PayeeType], [PayeeName]", conn)
     
 def v_Method() -> pd.DataFrame:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [v_Method] ORDER BY [MethodTypeName], [MethodDisplayName]", conn)
     
 def Users() -> pd.DataFrame:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [v_Users]", conn)
     
 def AccountType() -> pd.DataFrame:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [AccountType]", conn)
 
 def BankOrganization() -> pd.DataFrame:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [v_Organization] WHERE [IsAccountProvider] = 1", conn)
 
 def InvoiceItemCategory() -> pd.DataFrame:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [v_InvoiceItemCategory]", conn)
     
 def Statement() -> pd.DataFrame:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [v_Statement]", conn)
 
 def v_StatementItem() -> pd.DataFrame:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         return pd.read_sql("""
         SELECT 
             [AccountDisplayName] AS [Account],
@@ -79,7 +79,7 @@ def v_StatementItem() -> pd.DataFrame:
     """, conn)
 
 def UnmatchedImages() -> pd.DataFrame:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         queue:pd.DataFrame = pd.read_sql_query("""
             SELECT 
                 [ImageId],
@@ -95,19 +95,19 @@ def UnmatchedImages() -> pd.DataFrame:
     return queue
 
 def InvoiceTemplates() -> pd.DataFrame:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [v_InvoiceTemplate]", conn)
     
 def ImageContentType() -> pd.DataFrame:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [ImageContentType]", conn)
     
 def v_Invoice() -> pd.DataFrame:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [v_Invoice]", conn)
 
 def v_Image() -> pd.DataFrame:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         return pd.read_sql("""
             SELECT
                 [ImageId],
@@ -123,22 +123,22 @@ def v_Image() -> pd.DataFrame:
 
 # Display
 def v_DisplayInvoice() -> pd.DataFrame:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [v_DisplayInvoice]", conn)
     
 def v_DisplayInvoiceItem() -> pd.DataFrame:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [v_DisplayInvoiceItem]", conn)
     
 def v_DisplayStatementItem() -> pd.DataFrame:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [v_DisplayStatementItem]", conn)
     
 
 
 # Utility functions
 def v_StatementItemUnmatchedImages() -> pd.DataFrame:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         return pd.read_sql("""
         SELECT 
             si.[AccountDisplayName] AS [Account],
@@ -162,7 +162,7 @@ def v_StatementItemUnmatchedImages() -> pd.DataFrame:
 
 # Utility functions
 def v_StatementItemAccountTransfer() -> pd.DataFrame:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         return pd.read_sql("""
             SELECT
                 si.[AccountDisplayName] AS [Account],
@@ -184,7 +184,7 @@ def v_StatementItemAccountTransfer() -> pd.DataFrame:
     """, conn)
     
 def v_StatementItemLinkable() -> pd.DataFrame:
-    with get_connection() as conn:
+    with get_connection("ldr") as conn:
         return pd.read_sql("""
             SELECT
                 si.[AccountDisplayName] AS [Account],

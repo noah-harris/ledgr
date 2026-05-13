@@ -91,7 +91,7 @@ class AccountTransfer(Modal):
 			return
 	
 
-		with get_connection() as conn:
+		with get_connection("ldr") as conn:
 
 ##############################
 			from_invoice_id = str(uuid.uuid4()).upper()

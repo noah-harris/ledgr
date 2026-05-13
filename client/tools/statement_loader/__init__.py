@@ -63,7 +63,7 @@ class StatementLoader(Tool):
 
     @property
     def _image_url(self) -> str:
-        return f"{IMAGE_BASE_URL}/{self._image.ImageFileName}"
+        return f"{IMAGE_DIRECTORY}/{self._image.ImageFileName}"
 
     # ──────────────────────────────────────────────────────────
     # TEMP EXCEL
@@ -136,7 +136,7 @@ class StatementLoader(Tool):
         statement_image_id = self._image.ImageId
 
         try:
-            with get_connection() as conn:
+            with get_connection("ldr") as conn:
                 conn.execute(
                     text("UPDATE [Image] SET [ContentType]='STATEMENT', [StatusType]='c' WHERE [ImageId]=:image_id"),
                     {"image_id": statement_image_id}
@@ -145,11 +145,11 @@ class StatementLoader(Tool):
             df = self.get_data()
             df["StatementImageId"] = statement_image_id
 
-            with get_connection() as conn:
+            with get_connection("ldr") as conn:
                 df.to_sql("ve_StatementStatementItem", conn, if_exists="append", index=False)
 
         except Exception as e:
-            with get_connection() as conn:
+            with get_connection("ldr") as conn:
                 conn.execute(
                     text("UPDATE [Image] SET [ContentType]=:content_type, [StatusType]=:status_type WHERE [ImageId]=:image_id"),
                     {"image_id": statement_image_id, "content_type": self._image.ContentType, "status_type": self._image.StatusType}

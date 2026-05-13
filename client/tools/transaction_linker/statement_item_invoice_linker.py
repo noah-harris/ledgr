@@ -151,7 +151,7 @@ class StatementItemInvoiceReceiptLinker(Modal):
         if not messagebox.askyesno("Confirm Link", msg):
             return
 
-        with get_connection() as conn:
+        with get_connection("ldr") as conn:
             data.update_statement_item_invoice_id(conn, invoice.InvoiceId, item.StatementItemId)
 
         messagebox.showinfo("Linked", f"Successfully linked statement item to the invoice.")

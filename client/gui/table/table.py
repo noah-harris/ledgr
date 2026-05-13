@@ -2,7 +2,7 @@ import pandas as pd
 import tkinter as tk
 from tkinter import ttk
 import tkinter.font as tkfont
-from gui.style import TABLE_BUTTON
+from style import TABLE_BUTTON
 
 class Table(ttk.Treeview):
     """

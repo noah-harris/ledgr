@@ -1,8 +1,10 @@
+db-init
 db-seed/.env
 db-seed/local.py
 db-seed/SeedDataInsert.sql
 db-seed/SeedDataUpdate.sql
 .idea
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
