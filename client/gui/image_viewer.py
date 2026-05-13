@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
+from style import CANVAS_BG, BORDER, TEXT_LIGHT
 import fitz  # PyMuPDF
 from io import BytesIO
 from pathlib import Path
@@ -123,9 +124,9 @@ class ImageViewer(ttk.Frame):
         # ── canvas ─────────────────────────────────────────────
         canvas_kwargs = dict(
             highlightthickness=1,
-            highlightbackground="#000000",
-            highlightcolor="#000000",
-            background="#909090",
+            highlightbackground=BORDER,
+            highlightcolor=BORDER,
+            background=CANVAS_BG,
         )
         if canvas_size is not None:
             canvas_kwargs["width"] = canvas_size[0]
@@ -331,7 +332,7 @@ class ImageViewer(ttk.Frame):
         self.canvas.update_idletasks()
         cx = max(self.canvas.winfo_width() // 2, 50)
         cy = max(self.canvas.winfo_height() // 2, 50)
-        self.canvas.create_text(cx, cy, text=text, fill="white", font=("", 11, "italic"), anchor="center")
+        self.canvas.create_text(cx, cy, text=text, fill=TEXT_LIGHT, font=("", 11, "italic"), anchor="center")
 
     # ──────────────────────────────────────────────────────────
     # DRAGGING

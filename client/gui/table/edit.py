@@ -1,6 +1,7 @@
 import tkinter as tk
 import pandas as pd
 from tkinter import ttk
+from style import DANGER, TEXT_DARK, PRIMARY
 
 class EditMixin:
 
@@ -118,7 +119,7 @@ class EditMixin:
 
             if options is not None and self._options_readonly.get(col_name, True):
                 if raw not in options:
-                    widget.configure(foreground="#cc0000")
+                    widget.configure(foreground=DANGER)
                     return
 
             validator = self._validators.get(col_name)
@@ -126,7 +127,7 @@ class EditMixin:
                 try:
                     new_value = validator(raw)
                 except ValueError:
-                    widget.configure(foreground="#cc0000")
+                    widget.configure(foreground=DANGER)
                     return
             else:
                 new_value = raw
@@ -140,7 +141,7 @@ class EditMixin:
             self._close_editor()
 
         def clear_error(e=None):
-            widget.configure(foreground="black")
+            widget.configure(foreground=TEXT_DARK)
 
         widget.bind("<Return>",   commit)
         widget.bind("<Escape>",   cancel)
@@ -153,8 +154,8 @@ class EditMixin:
         entry = tk.Entry(
             self, relief="flat",
             highlightthickness=2,
-            highlightbackground="#0078D7",
-            highlightcolor="#0078D7",
+            highlightbackground=PRIMARY,
+            highlightcolor=PRIMARY,
         )
         entry.insert(0, value)
         entry.select_range(0, "end")
@@ -284,7 +285,7 @@ class EditMixin:
 #             # readonly combobox: block values not in the list
 #             if options is not None and self._options_readonly.get(col_name, True):
 #                 if raw not in options:
-#                     widget.configure(foreground="#cc0000")
+#                     widget.configure(foreground=DANGER)
 #                     return
 
 #             validator = self._validators.get(col_name)
@@ -292,7 +293,7 @@ class EditMixin:
 #                 try:
 #                     new_value = validator(raw)
 #                 except ValueError:
-#                     widget.configure(foreground="#cc0000")
+#                     widget.configure(foreground=DANGER)
 #                     return
 #             else:
 #                 new_value = raw
@@ -306,7 +307,7 @@ class EditMixin:
 #             self._close_editor()
 
 #         def clear_error(e=None):
-#             widget.configure(foreground="black")
+#             widget.configure(foreground=TEXT_DARK)
 
 #         widget.bind("<Return>",   commit)
 #         widget.bind("<Escape>",   cancel)

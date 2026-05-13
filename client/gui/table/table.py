@@ -2,7 +2,7 @@ import pandas as pd
 import tkinter as tk
 from tkinter import ttk
 import tkinter.font as tkfont
-from style import TABLE_BUTTON
+from style import SURFACE
 
 class Table(ttk.Treeview):
     """
@@ -228,11 +228,11 @@ class Table(ttk.Treeview):
                 if not bbox:
                     continue
                 x, y, w, h = bbox
-                btn = tk.Button(
+                btn = ttk.Button(
                     self,
                     text=col_info["label"],
                     command=lambda rd=row_dict, cb=col_info["callback"]: cb(rd),
-                    **TABLE_BUTTON
+                    style='Table.TButton',
                 )
                 btn.place(x=x, y=y, width=w, height=h)
                 col_info["widgets"].append(btn)
@@ -270,6 +270,6 @@ class Table(ttk.Treeview):
         else:
             self.state(["disabled"])
             if not hasattr(self, "_overlay"):
-                self._overlay = tk.Frame(self, bg="#d3d3d3")
+                self._overlay = ttk.Frame(self, style='Surface.TFrame')
             self._overlay.place(relx=0, rely=0, relwidth=1, relheight=1)
             self._overlay.lift()

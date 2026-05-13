@@ -1,5 +1,4 @@
 import tkinter as tk
-from color import *
 
 class Modal(tk.Toplevel):
 

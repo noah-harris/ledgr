@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
+import style
 from tools.users_creator import UsersCreator
 from tools.account_creator import AccountCreator
 from tools.statement_loader import StatementLoader
@@ -14,8 +15,10 @@ class App(tk.Tk):
 
     def __init__(self):
         super().__init__()
+
         self.title("Ledgr v1.0.0.0")
         self.state('zoomed')
+        style.apply_styles(self)
 
         frame = ttk.Frame(self)
         frame.pack(fill="both", expand=True)
@@ -44,6 +47,15 @@ class App(tk.Tk):
         tool_menu.add_command(label="Statement Item / Invoice Linker", command=lambda: StatementItemInvoiceLinker(self))
 
         menubar.add_cascade(label="Tools", menu=tool_menu)
-    
+
+        menu_style = dict(
+            bg=style.SURFACE, fg=style.TEXT_DARK,
+            activebackground=style.PRIMARY, activeforeground=style.TEXT_LIGHT,
+            relief='flat', borderwidth=0,
+        )
+        menubar.configure(**menu_style)
+        for m in [user_menu, account_menu, misc_menu, tool_menu]:
+            m.configure(**menu_style)
+
         self.config(menu=menubar)
         self.mainloop()
