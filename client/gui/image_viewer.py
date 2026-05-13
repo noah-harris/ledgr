@@ -293,7 +293,7 @@ class ImageViewer(ttk.Frame):
         self._tk_img = ImageTk.PhotoImage(resized)
         self.canvas.update_idletasks()
         canvas_h = self.canvas.winfo_height()
-        self._image_id = self.canvas.create_image(0, canvas_h, image=self._tk_img, anchor="sw")
+        self._image_id = self.canvas.create_image(0, 0, image=self._tk_img, anchor="nw")
         self.canvas.config(scrollregion=self.canvas.bbox(self._image_id))
 
     def _render_pdf_page(self):

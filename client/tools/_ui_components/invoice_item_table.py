@@ -2,6 +2,9 @@ from gui import EditableDraggableTable
 import tkinter as tk
 import data
 from style import PRIMARY, BORDER, FONT, CARD, TEXT_DARK, TEXT_LIGHT
+from config import make_logger
+
+logger = make_logger(__name__)
 
 class InvoiceItemTable(EditableDraggableTable):
 
@@ -265,5 +268,5 @@ class InvoiceItemTable(EditableDraggableTable):
             for i, child in enumerate(self.get_children()):
                 self.set(child, self.rank_col, i + 1)
         except Exception as e:
-            print(f"Error deleting row: {e}")
+            logger.error(f"Error deleting row: {e}")
             

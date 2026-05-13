@@ -7,11 +7,11 @@
 
 -- UI Polish --
 7. [UI] Image sorter table — clicking a row should load the selected image into the viewer and sync the image queue position.
-8. [UI] Image viewer — images should render starting from the top-left corner (currently anchored bottom-left).
+8. [UI] ~~Image viewer — images should render starting from the top-left corner (currently anchored bottom-left).~~ DONE
 9. [UI] Invoice card description section — polish layout: uppercase muted title, proper padding, larger body text, wider wraplength.
 10. [UI] Invoice card layout — InvoicePanel table columns clip text; make the whole card and table stretch to fill available width.
 11. [UI] Invoice card description label needs to be more polished visually.
-12. [UI] Menu bar — style with PRIMARY color background and TEXT_LIGHT foreground to match app theme.
+12. [UI] ~~Menu bar — style with PRIMARY color background and TEXT_LIGHT foreground to match app theme.~~ DONE
 13. [UI] Window title bar color — set to PRIMARY using Win32 ctypes (DWMWA_CAPTION_COLOR, Windows 11 only).
 14. [UI] App logo / icon — create .ico file and apply via self.iconbitmap() in App.
 
@@ -22,7 +22,7 @@
 18. [Feature] Assign segments to Organizations — for each Organization without a segment classification, allow user to assign one via the OrganizationCreator UI or a seed script.
 
 -- Refactor --
-19. [Refactor] Clean up bare print() calls across client/ — replace with logger.debug() / logger.warning() as appropriate.
+19. [Refactor] ~~Clean up bare print() calls across client/ — replace with logger.debug() / logger.warning() as appropriate.~~ DONE
 
 -- Data --
 20. [Data] Add data.v_OrphanInvoices() — invoices not linked to any StatementItem.

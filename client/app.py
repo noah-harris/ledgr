@@ -49,8 +49,8 @@ class App(tk.Tk):
         menubar.add_cascade(label="Tools", menu=tool_menu)
 
         menu_style = dict(
-            bg=style.SURFACE, fg=style.TEXT_DARK,
-            activebackground=style.PRIMARY, activeforeground=style.TEXT_LIGHT,
+            bg=style.PRIMARY, fg=style.TEXT_LIGHT,
+            activebackground=style.HOVER, activeforeground=style.TEXT_LIGHT,
             relief='flat', borderwidth=0,
         )
         menubar.configure(**menu_style)
