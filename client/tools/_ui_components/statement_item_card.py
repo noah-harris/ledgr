@@ -17,11 +17,11 @@ class StatementItemCard(ttk.Frame):
         ttk.Label(left_frame, text=_line_2_text, style='Card.Muted.TLabel').pack(anchor='w')
 
         right_frame = ttk.Frame(self, style='Card.TFrame')
-        ttk.Button(right_frame, text="View Receipt", command=self._view_receipt, style='Ghost.TButton').pack(side='right', padx=(0, 10))
-        ttk.Label(right_frame, text=f"{statement_item.Amount}", style='Card.Bold.TLabel').pack(side='right', padx=(0, 10))
+        ttk.Button(right_frame, text="View Receipt", command=self._view_receipt, style='Ghost.TButton').pack(side='right')
+        ttk.Label(right_frame, text=f"{statement_item.Amount}", style='Card.Bold.TLabel').pack(side='right', padx=(0, 12))
 
-        left_frame.pack(side="left", fill="both", expand=True, padx=(0, 10), pady=10)
-        right_frame.pack(side="right", fill="both", expand=True, padx=(10, 0), pady=10)
+        left_frame.pack(side="left", fill="both", expand=True, padx=(10, 5), pady=10)
+        right_frame.pack(side="right", fill="both", padx=(5, 10), pady=10)
 
     def _view_receipt(self):
         from pathlib import Path
