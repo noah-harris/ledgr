@@ -50,6 +50,14 @@ def BankOrganization() -> pd.DataFrame:
     with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [v_Organization] WHERE [IsAccountProvider] = 1", conn)
 
+def Organizations() -> pd.DataFrame:
+    with get_connection("ldr") as conn:
+        return pd.read_sql("SELECT * FROM [v_Organization]", conn)
+
+def OrganizationTypes() -> pd.DataFrame:
+    with get_connection("ldr") as conn:
+        return pd.read_sql("SELECT * FROM [OrganizationType]", conn)
+
 def InvoiceItemCategory() -> pd.DataFrame:
     with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [v_InvoiceItemCategory]", conn)

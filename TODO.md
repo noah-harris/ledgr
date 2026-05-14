@@ -19,7 +19,7 @@
 15. [Feature] Invoice editor — implement full edit UI (pre-fill InvoiceForm + InvoiceItemTable from existing invoice, save via data.update_invoice()).
 16. [Feature] Main page dashboard — replace placeholder with panels for: Missing Statements, Account Transfer Issues, Images to Sort, Statement Items with No Invoice, Orphan Invoices, Invoice Amount Mismatches.
 17. [Feature] Budget system — Budget table (name, start_date, end_date) + BudgetCategory (budget_id, category_id, target_amount). UI to create/edit budgets; compare actual invoice item spend per category vs target.
-18. [Feature] Assign segments to Organizations — for each Organization without a segment classification, allow user to assign one via the OrganizationCreator UI or a seed script.
+18. [Feature] ~~Assign segments to Organizations — for each Organization without a segment classification, allow user to assign one via the OrganizationCreator UI or a seed script.~~ DONE (OrganizationCreator now has full Organization + OrganizationType editor)
 
 -- Refactor --
 19. [Refactor] ~~Clean up bare print() calls across client/ — replace with logger.debug() / logger.warning() as appropriate.~~ DONE
