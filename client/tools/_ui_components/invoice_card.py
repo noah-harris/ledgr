@@ -32,10 +32,8 @@ class HeaderDescription(ttk.Frame):
 
     def __init__(self, master, invoice: Invoice):
         super().__init__(master, style='Bordered.Card.TFrame')
-        description_title = "Description:"
-        description_text = f"{invoice.InvoiceDescription}"
-        ttk.Label(self, text=description_title, style='Card.Bold.TLabel').pack(anchor='w')
-        ttk.Label(self, text=description_text, style='Card.TLabel', font=(FONT, 8), wraplength=400, justify="left").pack(anchor='w')
+        ttk.Label(self, text="DESCRIPTION", style='Card.Muted.TLabel', font=(FONT, 8)).pack(anchor='w', padx=12, pady=(10, 2))
+        ttk.Label(self, text=f"{invoice.InvoiceDescription}", style='Card.TLabel', font=(FONT, 10), wraplength=700, justify="left").pack(anchor='w', padx=12, pady=(0, 10))
 
 
 class Header(ttk.Frame):
@@ -83,14 +81,18 @@ class InvoicePanel(ttk.Frame):
         self.table.grid(row=0, column=0, sticky="nsew", padx=(0,10))
         self.image.grid(row=0, column=1, sticky="nsew")
         self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=2)
         self.grid_columnconfigure(1, weight=3)
 
 
     def _table(self, invoice: Invoice):
         from style import BORDER_STRONG
         table = Table(self, border={'color': BORDER_STRONG, 'thickness': 1}, columns={
-            "#": {"width":20}, "Category": {"width":200, 'justify':"left"}, "Description": {"width":200, 'justify':"left"}, "Qty": {"width":50}, "Amt": {"width":60, 'justify':"right"},
+            "#":           {"width": 20},
+            "Category":    {"justify": "left"},
+            "Description": {"justify": "left"},
+            "Qty":         {"width": 50},
+            "Amt":         {"width": 60, "justify": "right"},
         })
         table.data = invoice.InvoiceItems
         return table

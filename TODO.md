@@ -6,7 +6,7 @@
 6. [UI Bug] Grey box artifact on image viewer frame — the frame containing the canvas and filename in the image viewer has an unwanted grey box. The whole frame should have padding, a visible border, and a light background color.
 
 -- UI Polish --
-7. [UI] Image sorter table — clicking a row should load the selected image into the viewer and sync the image queue position.
+7. [UI] ~~Image sorter table — clicking a row should load the selected image into the viewer and sync the image queue position.~~ DONE
 8. [UI] ~~Image viewer — images should render starting from the top-left corner (currently anchored bottom-left).~~ DONE
 9. [UI] Invoice card description section — polish layout: uppercase muted title, proper padding, larger body text, wider wraplength.
 10. [UI] Invoice card layout — InvoicePanel table columns clip text; make the whole card and table stretch to fill available width.
