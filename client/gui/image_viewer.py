@@ -103,7 +103,7 @@ class ImageQueue:
 class ImageViewer(ttk.Frame):
 
     def __init__(self, master, show_nav_buttons: bool=True, canvas_size=None):
-        super().__init__(master)
+        super().__init__(master, style="Card.TFrame", padding=6)
 
         # ── state ───────────────────────────────────────────────
         self._path:Path|None = None
