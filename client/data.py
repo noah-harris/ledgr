@@ -50,6 +50,10 @@ def BankOrganization() -> pd.DataFrame:
     with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [v_Organization] WHERE [IsAccountProvider] = 1", conn)
 
+def Currency() -> pd.DataFrame:
+    with get_connection("ldr") as conn:
+        return pd.read_sql("SELECT [Currency], [Symbol] FROM [Currency] ORDER BY [Currency]", conn)
+
 def Organizations() -> pd.DataFrame:
     with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [v_Organization]", conn)
