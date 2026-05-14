@@ -13,7 +13,7 @@
 -- UI Polish --
 7. [UI] ~~Image sorter table — clicking a row should load the selected image into the viewer and sync the image queue position.~~ DONE
 8. [UI] ~~Image viewer — images should render starting from the top-left corner (currently anchored bottom-left).~~ DONE
-9. [UI] Invoice card description section — polish layout: uppercase muted title, proper padding, larger body text, wider wraplength.
+9. [UI] ~~Invoice card description section — polish layout: uppercase muted title, proper padding, larger body text, wider wraplength.~~
 10. [UI] Invoice card layout — InvoicePanel table columns clip text; make the whole card and table stretch to fill available width.
 11. [UI] ~~Invoice card description label needs to be more polished visually.~~
 12. [UI] ~~Menu bar — style with PRIMARY color background and TEXT_LIGHT foreground to match app theme.~~ DONE
@@ -37,11 +37,7 @@ This is a very large task and needs careful consideration.
 20. [Data] Add data.v_OrphanInvoices() — invoices not linked to any StatementItem.
 21. [Data] Add data.v_InvoiceAmountMismatch() — invoices where Invoice.Amount ≠ sum(InvoiceItem.Amount) or ≠ StatementItem.Amount.
 22. [Data] Add data.p_MissingStatementCheck() — wrapper for stored proc that detects gaps in statement coverage per account.
-
-
 23a. [Data] Update the new Category column with values.
-
-
 25. [Data] The invoice item category system does not necessarily need to be refactored, some of the categories just need a little more specificity.
 This task is vague and needs more explenation.
 
