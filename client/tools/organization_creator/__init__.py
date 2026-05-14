@@ -7,7 +7,7 @@ from sqlalchemy import text
 import data
 from config import make_logger
 from db import get_connection
-from gui import Table
+from gui import ControlPanelTable
 from tools import Tool
 from .._ui_components.organization_form import OrganizationForm
 from .._ui_components.organization_type_form import OrganizationTypeForm
@@ -72,15 +72,16 @@ class _OrganizationsTab(ttk.Frame):
         right.columnconfigure(0, weight=1)
         right.rowconfigure(0, weight=1)
 
-        self._table = Table(right, columns={
+        self._table = ControlPanelTable(right, title="Organizations", columns={
             "OrganizationId":       {"is_hidden": True},
             "OrganizationName":     {"justify": "left",   "width": 200},
             "OrganizationTypeName": {"justify": "left",   "width": 160},
             "Segment":              {"justify": "center", "width": 120},
             "Description":          {"justify": "left",   "width": 280},
-            "Edit":   {"button": ("Edit",   self._handle_edit),   "width": 60},
-            "Delete": {"button": ("Delete", self._handle_delete), "width": 70},
         })
+        self._table.set_edit_command(self._handle_edit)
+        self._table.set_delete_command(self._handle_delete)
+        self._table.set_create_command(self._handle_create)
         self._table.grid(row=0, column=0, sticky="nsew")
 
         self._refresh_table()
@@ -131,6 +132,9 @@ class _OrganizationsTab(ttk.Frame):
         except Exception as e:
             logger.error("Failed to save Organization: %s", e)
             messagebox.showerror("Error", f"Failed to save Organization:\n{e}")
+
+    def _handle_create(self):
+        self._handle_cancel()
 
     def _handle_cancel(self):
         self._editing_id = None
@@ -199,15 +203,16 @@ class _OrganizationTypesTab(ttk.Frame):
         right.columnconfigure(0, weight=1)
         right.rowconfigure(0, weight=1)
 
-        self._table = Table(right, columns={
+        self._table = ControlPanelTable(right, title="Organization Types", columns={
             "OrganizationTypeId":   {"is_hidden": True},
             "OrganizationTypeName": {"justify": "left",   "width": 200},
             "IsAccountProvider":    {"justify": "center", "width": 140},
             "Segment":              {"justify": "center", "width": 130},
             "Description":          {"justify": "left",   "width": 280},
-            "Edit":   {"button": ("Edit",   self._handle_edit),   "width": 60},
-            "Delete": {"button": ("Delete", self._handle_delete), "width": 70},
         })
+        self._table.set_edit_command(self._handle_edit)
+        self._table.set_delete_command(self._handle_delete)
+        self._table.set_create_command(self._handle_create)
         self._table.grid(row=0, column=0, sticky="nsew")
 
         self._refresh_table()
@@ -262,6 +267,9 @@ class _OrganizationTypesTab(ttk.Frame):
         except Exception as e:
             logger.error("Failed to save OrganizationType: %s", e)
             messagebox.showerror("Error", f"Failed to save Organization Type:\n{e}")
+
+    def _handle_create(self):
+        self._handle_cancel()
 
     def _handle_cancel(self):
         self._editing_id = None

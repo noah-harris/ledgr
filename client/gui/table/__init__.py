@@ -1,8 +1,15 @@
 from  .edit import EditMixin
 from .table import Table
 from .drag import DragMixin
+from .control_panel import ControlPanelMixin
 from tkinter import ttk
-import pandas as pd 
+import pandas as pd
+
+
+class ControlPanelTable(ControlPanelMixin, Table):
+    def __init__(self, master, columns: dict, title: str = "", **kwargs):
+        super().__init__(master, columns=columns, title=title, **kwargs)
+
 
 class DraggableTable(DragMixin, Table):
 
@@ -33,4 +40,4 @@ class EditableTable(EditMixin, Table):
         self._data = pd.DataFrame(rows, columns=self._columns)
 
 
-__all__ = ["DraggableTable", "EditableDraggableTable", "EditableTable", "Table"]
+__all__ = ["ControlPanelTable", "DraggableTable", "EditableDraggableTable", "EditableTable", "Table"]
