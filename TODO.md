@@ -49,3 +49,8 @@ This task is vague and needs more explenation.
 29. Add a units table
 
 30. There is a bug where when clicking the Create statement menu button, the modal appears in the top left corner not in the center of the screen.
+
+31. Sorting an image in image sort should remove that item form the table
+
+32. When uploading a statement item in the statement item loaded, when clicking the load statement button it should close the window.
+32a. Additionally, then statement viewer and the statement loader (UploadStatement and reopen excel) should be in the same tool
