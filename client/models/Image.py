@@ -23,12 +23,12 @@ class Image:
 
         if not df.empty:
             row = df.iloc[0]
-            self.ImageId = row['ImageId']
-            self.FileName = row['FileName']
-            self.FileType = row['FileType']
-            self.StatusType = row['StatusType']
-            self.ContentType = row['ContentType']
-            self.ImageFileName = row['ImageFileName']
+            self.ImageId = self.ImageId or row['ImageId']
+            self.FileName = self.FileName or row['FileName']
+            self.FileType = self.FileType or row['FileType']
+            self.StatusType = self.StatusType or row['StatusType']
+            self.ContentType = self.ContentType or row['ContentType']
+            self.ImageFileName = self.ImageFileName or row['ImageFileName']
         else:
             self.ImageId = None
             self.ImageFileName = None

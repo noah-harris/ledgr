@@ -30,6 +30,7 @@
 19. [Refactor] ~~Clean up bare print() calls across client/ — replace with logger.debug() / logger.warning() as appropriate.~~ DONE
 24. [Refactor] Finish the implementation of the user system. The functionality is not really scoped yet other than 1, a user should not be able to see other users information, 2, if 2 users are for example married there finances are combined. THis means that not only can they see each others information, but all objects are shared so that makes the database part a little less straight forward.
 This is a very large task and needs careful consideration.
+
 23. [Refactor] Orgasnization Type needs another degree of freedom on it. Add a category column.
 
 
@@ -40,4 +41,8 @@ This is a very large task and needs careful consideration.
 23a. [Data] Update the new Category column with values.
 25. [Data] The invoice item category system does not necessarily need to be refactored, some of the categories just need a little more specificity.
 This task is vague and needs more explenation.
+
+26. for the Invoice Item Category remapper, I would like to able to type and have it auto fill in the same way that the InvoiceItemCateogry column does in the invoiceItem table editor.
+
+27. Add a units table
 

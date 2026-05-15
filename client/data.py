@@ -254,6 +254,14 @@ def update_statement_item_invoice_id(conn:engine.Connection, invoice_id, stateme
         messagebox.showerror("Error", f"Failed to Update Statement Item InvoiceId: {str(e)}")
         raise e
 
+def unlink_statement_item_from_invoice(conn:engine.Connection, statement_item_id):
+    try:
+        conn.execute(text("UPDATE [StatementItem] SET [InvoiceId]=NULL WHERE [StatementItemId]=:id"),
+                     {"id": statement_item_id})
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to unlink statement item: {str(e)}")
+        raise e
+
 # INSERT FUNCTIONS
 
 def insert_invoice(conn:engine.Connection, invoice:dict, invoice_item:pd.DataFrame):
@@ -263,6 +271,28 @@ def insert_invoice(conn:engine.Connection, invoice:dict, invoice_item:pd.DataFra
         invoice_item.to_sql("InvoiceItem", conn, if_exists="append", index=False)
     except Exception as e:
         messagebox.showerror("Error", f"Failed to Insert Invoice: {str(e)}")
+        raise e
+
+def update_invoice(conn:engine.Connection, invoice:dict, invoice_items:pd.DataFrame):
+    try:
+        conn.execute(text("""
+            UPDATE [Invoice] SET
+                [PayeeId]       = :PayeeId,
+                [InvoiceDate]   = :InvoiceDate,
+                [DueDate]       = :DueDate,
+                [InvoiceNumber] = :InvoiceNumber,
+                [Amount]        = :Amount,
+                [Description]   = :Description,
+                [StartDate]     = :StartDate,
+                [EndDate]       = :EndDate,
+                [ImageId]       = :ImageId
+            WHERE [InvoiceId] = :InvoiceId
+        """), invoice)
+        conn.execute(text("DELETE FROM [InvoiceItem] WHERE [InvoiceId] = :InvoiceId"),
+                     {"InvoiceId": invoice["InvoiceId"]})
+        invoice_items.to_sql("InvoiceItem", conn, if_exists="append", index=False)
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to Update Invoice: {str(e)}")
         raise e
     
 

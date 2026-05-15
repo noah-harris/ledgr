@@ -2,7 +2,9 @@ from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
 import pandas as pd
+from sqlalchemy import text
 import data
+from db import get_connection
 from .StatementItem import StatementItem
 
 @dataclass
@@ -19,6 +21,7 @@ class Invoice:
     StartDate: datetime = None
     EndDate: datetime = None
     ImageFileName: str = None
+    ImageId: str = None
     InvoiceItems: pd.DataFrame = None
     StatementItems: list[str] = None
 
@@ -40,6 +43,13 @@ class Invoice:
             self.StartDate = df.iloc[0]['StartDate']
             self.EndDate = df.iloc[0]['EndDate']
             self.ImageFileName = df.iloc[0]['ImageFileName']
+
+            with get_connection("ldr") as conn:
+                row = conn.execute(
+                    text("SELECT [ImageId] FROM [Invoice] WHERE [InvoiceId]=:id"),
+                    {"id": str(self.InvoiceId).upper()}
+                ).fetchone()
+                self.ImageId = str(row[0]).upper() if row and row[0] else None
 
             invoice_item = data.v_DisplayInvoiceItem()
             self.InvoiceItems = invoice_item[invoice_item['InvoiceId'] == str(self.InvoiceId).upper()].sort_values("#")

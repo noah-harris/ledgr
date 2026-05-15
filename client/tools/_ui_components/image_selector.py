@@ -7,10 +7,10 @@ from models import Image
 
 class ImageSelector(Modal):
 
-    def __init__(self, master):
+    def __init__(self, master, show_all: bool = False):
         super().__init__(master, background_color="white", border_thickness=2, border_color="black")
         self._selected_image: Image = None
-        self._all_images = data.UnmatchedImages()
+        self._all_images = data.v_Image() if show_all else data.UnmatchedImages()
 
         ttk.Label(self, text="Select Image", font=("", 12, "bold")).pack(pady=(10, 5))
 
