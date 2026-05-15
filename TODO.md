@@ -42,9 +42,10 @@ This is a very large task and needs careful consideration.
 25. [Data] The invoice item category system does not necessarily need to be refactored, some of the categories just need a little more specificity.
 This task is vague and needs more explenation.
 
-26. for the Invoice Item Category remapper, I would like to able to type and have it auto fill in the same way that the InvoiceItemCateogry column does in the invoiceItem table editor.
-27. In the Invoice Item Category editor, I would like to see how many line items currently exist for it in the databse
-28. I would like to the display order just automatically increment by 10 to the largest one from the segment. So if the PAYCHECK Segment has a maximum display order of 190, when a usesr createds a new PAYCHECK InvoiceItemCategory if the Display order field is empty, it becomes 200.
+26. ~~for the Invoice Item Category remapper, I would like to able to type and have it auto fill in the same way that the InvoiceItemCateogry column does in the invoiceItem table editor.~~
+27. ~~In the Invoice Item Category editor, I would like to see how many line items currently exist for it in the databse~~
+28. ~~I would like to the display order just automatically increment by 10 to the largest one from the segment. So if the PAYCHECK Segment has a maximum display order of 190, when a usesr createds a new PAYCHECK InvoiceItemCategory if the Display order field is empty, it becomes 200.~~
 
 29. Add a units table
 
+30. There is a bug where when clicking the Create statement menu button, the modal appears in the top left corner not in the center of the screen.

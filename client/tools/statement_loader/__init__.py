@@ -138,7 +138,7 @@ class StatementLoader(Tool):
         try:
             with get_connection("ldr") as conn:
                 conn.execute(
-                    text("UPDATE [Image] SET [ContentType]='STATEMENT', [StatusType]='c' WHERE [ImageId]=:image_id"),
+                    text("UPDATE [ImageSort] SET [ContentType]='STATEMENT', [StatusType]='c' WHERE [ImageId]=:image_id"),
                     {"image_id": statement_image_id}
                 )
 
@@ -151,7 +151,7 @@ class StatementLoader(Tool):
         except Exception as e:
             with get_connection("ldr") as conn:
                 conn.execute(
-                    text("UPDATE [Image] SET [ContentType]=:content_type, [StatusType]=:status_type WHERE [ImageId]=:image_id"),
+                    text("UPDATE [ImageSort] SET [ContentType]=:content_type, [StatusType]=:status_type WHERE [ImageId]=:image_id"),
                     {"image_id": statement_image_id, "content_type": self._image.ContentType, "status_type": self._image.StatusType}
                 )
                 conn.execute(text("DELETE FROM [Statement] WHERE [ImageId]=:image_id"), {"image_id": statement_image_id})
