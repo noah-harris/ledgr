@@ -1,5 +1,8 @@
 from pathlib import Path
 import requests
+from config import make_logger
+
+logger = make_logger(__name__)
 
 def resolve_image_bytes(image: str | Path | bytes | None) -> bytes | None:
 
@@ -17,9 +20,9 @@ def resolve_image_bytes(image: str | Path | bytes | None) -> bytes | None:
             response.raise_for_status()
             return response.content
         except Exception as e:
-            print(f"Error fetching image from URL {image_str}: {e}")
+            logger.error(f"Error fetching image from URL {image_str}: {e}")
     else:
         try:
             return Path(image_str).read_bytes()
         except Exception as e:
-            print(f"Error reading image from file {image_str}: {e}")
+            logger.error(f"Error reading image from file {image_str}: {e}")

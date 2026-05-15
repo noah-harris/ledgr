@@ -48,16 +48,25 @@ class AccountForm(Form):
         colspan=2,
     )
 
-    description = StringField(
-        label="Description:",
+    currency = StringField(
+        label="Currency:",
+        widget="combobox",
+        values=data.Currency()["Currency"].tolist(),
         row=6, col=0,
         colspan=2,
     )
 
-    users_widget:ttk.Combobox
-    organization_widget:ttk.Combobox
-    account_type_widget:ttk.Combobox
-    account_number_widget:ttk.Entry 
-    start_date_widget:ttk.Entry
-    end_date_widget:ttk.Entry
-    description_widget:ttk.Entry
+    description = StringField(
+        label="Description:",
+        row=7, col=0,
+        colspan=2,
+    )
+
+    users_widget: ttk.Combobox
+    organization_widget: ttk.Combobox
+    account_type_widget: ttk.Combobox
+    account_number_widget: ttk.Entry
+    start_date_widget: ttk.Entry
+    end_date_widget: ttk.Entry
+    currency_widget: ttk.Combobox
+    description_widget: ttk.Entry

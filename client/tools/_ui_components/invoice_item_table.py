@@ -1,6 +1,10 @@
 from gui import EditableDraggableTable
 import tkinter as tk
 import data
+from style import PRIMARY, BORDER, FONT, CARD, TEXT_DARK, TEXT_LIGHT
+from config import make_logger
+
+logger = make_logger(__name__)
 
 class InvoiceItemTable(EditableDraggableTable):
 
@@ -67,14 +71,14 @@ class InvoiceItemTable(EditableDraggableTable):
         self._cat_close()
 
         # ── Entry ─────────────────────────────────────────────────────────────
-        entry = tk.Entry(self, relief="flat", highlightthickness=1, highlightbackground="#0078D7", highlightcolor="#0078D7")
+        entry = tk.Entry(self, relief="flat", highlightthickness=1, highlightbackground=PRIMARY, highlightcolor=PRIMARY)
         entry.place(x=x, y=y, width=width, height=height)
         entry.focus_set()
         self._cat_entry = entry
 
         # ── Listbox in a Frame ────────────────────────────────────────────────
-        lb_frame = tk.Frame(self, bd=1, relief="solid", bg="#cccccc")
-        lb = tk.Listbox(lb_frame, selectmode="single", activestyle="none", font=("Segoe UI", 9), relief="flat", highlightthickness=0, height=6)
+        lb_frame = tk.Frame(self, bd=1, relief="solid", bg=BORDER)
+        lb = tk.Listbox(lb_frame, selectmode="single", activestyle="none", font=(FONT, 9), relief="flat", highlightthickness=0, height=6, bg=CARD, fg=TEXT_DARK, selectbackground=PRIMARY, selectforeground=TEXT_LIGHT)
         lb.pack(fill="both", expand=True, padx=1, pady=1)
 
         lb_frame.place(x=x, y=y + height, width=max(width, 300))
@@ -264,5 +268,5 @@ class InvoiceItemTable(EditableDraggableTable):
             for i, child in enumerate(self.get_children()):
                 self.set(child, self.rank_col, i + 1)
         except Exception as e:
-            print(f"Error deleting row: {e}")
+            logger.error(f"Error deleting row: {e}")
             

@@ -9,13 +9,13 @@ from db import get_connection
 from sqlalchemy import text, engine
 import pandas as pd
 import data
-from color import *
 import uuid
+from style import FONT, SUCCESS, DANGER, CARD, BORDER_STRONG
 
 class Invoice(Modal):
 
     def __init__(self, master, image_queue):
-        super().__init__(master, background_color=WHITE, border_thickness=2, border_color=BLACK)
+        super().__init__(master, background_color=CARD, border_thickness=2, border_color=BORDER_STRONG)
         self._image_queue:ImageQueue = image_queue
         self.invoice_form:InvoiceForm = InvoiceForm(self)
 
@@ -59,12 +59,12 @@ class Invoice(Modal):
             self._update_invoice_item_table_total()
 
         frame = ttk.Frame(self)
-        ttk.Label(frame, text="Invoice Data").grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        ttk.Label(frame, text="Invoice Data", style='Heading.TLabel').grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
         combo_frame = ttk.Frame(self)
         combo_frame.grid(row=0, column=1, padx=(0,10), pady=10, sticky='w')
 
-        ttk.Label(combo_frame, text="Invoice Template:").grid(row=0,column=0, padx=(0,10))
+        ttk.Label(combo_frame, text="Invoice Template:").grid(row=0, column=0, padx=(0,10))
         invoice_template_combobox = ttk.Combobox(combo_frame, values=data.InvoiceTemplates()["InvoiceTemplateName"].to_list(), state="readonly", textvariable=self._invoice_template_name_var, width=40)
         invoice_template_combobox.grid(row=0, column=1)
         invoice_template_combobox.bind("<<ComboboxSelected>>", _select_invoice_template)
@@ -74,8 +74,7 @@ class Invoice(Modal):
     @cached_property
     def invoice_item_table_total(self):
         self._invoice_item_table_total_var = tk.StringVar(value="0.00")
-        label = ttk.Label(self, textvariable=self._invoice_item_table_total_var)
-        label.configure(font=("", 24, "bold"))
+        label = ttk.Label(self, textvariable=self._invoice_item_table_total_var, font=(FONT, 24, 'bold'))
         return label
 
 
@@ -112,7 +111,7 @@ class Invoice(Modal):
         frame = ttk.Frame(self)
         add_item_button = ttk.Button(frame, text="Add Item", command=self.invoice_item_table.add_row)
         add_item_button.grid(row=0, column=0, padx=5)
-        delete_item_button = ttk.Button(frame, text="Delete Item", command=self.invoice_item_table.delete_row)
+        delete_item_button = ttk.Button(frame, text="Delete Item", command=self.invoice_item_table.delete_row, style='Danger.TButton')
         delete_item_button.grid(row=0, column=1, padx=(0,5))
         return frame
     
@@ -126,9 +125,9 @@ class Invoice(Modal):
         total = round(Decimal(str(pd.to_numeric(self.invoice_item_table.data["Amount"], errors="coerce").fillna(0).sum())), 2)
         self._invoice_item_table_total_var.set(f"{total:.2f}")
         if self._table_total_matches_invoice_total():
-            self.invoice_item_table_total.configure(foreground="green")
+            self.invoice_item_table_total.configure(foreground=SUCCESS)
         else:
-            self.invoice_item_table_total.configure(foreground="red")
+            self.invoice_item_table_total.configure(foreground=DANGER)
 
     def _save(self):
         """Connection is passed in so that the insert can be executed within an existing transaction. That way if a part fails data integrity is maintained."""

@@ -9,7 +9,7 @@ from db import get_connection
 from sqlalchemy import text, engine
 import pandas as pd
 import data
-from color import *
+from style import CARD, BORDER_STRONG, FONT, SUCCESS, DANGER
 import uuid
 
 from models.Invoice import StatementItem
@@ -18,7 +18,7 @@ from .._ui_components import StatementItemCard
 class TransactionCompletionLinker(Modal):
 
     def __init__(self, master, statement_item:StatementItem, close_callback):
-        super().__init__(master, background_color=WHITE, border_thickness=2, border_color=BLACK)
+        super().__init__(master, background_color=CARD, border_thickness=2, border_color=BORDER_STRONG)
         self._close_callback = close_callback
         self.invoice_form:InvoiceForm = InvoiceForm(self)
         self.statement_item:StatementItem = statement_item
@@ -79,7 +79,7 @@ class TransactionCompletionLinker(Modal):
     def invoice_item_table_total(self):
         self._invoice_item_table_total_var = tk.StringVar(value="0.00")
         label = ttk.Label(self, textvariable=self._invoice_item_table_total_var)
-        label.configure(font=("", 24, "bold"))
+        label.configure(font=(FONT, 24, 'bold'))
         return label
 
 
@@ -130,9 +130,9 @@ class TransactionCompletionLinker(Modal):
         total = round(Decimal(str(pd.to_numeric(self.invoice_item_table.data["Amount"], errors="coerce").fillna(0).sum())), 2)
         self._invoice_item_table_total_var.set(f"{total:.2f}")
         if self._table_total_matches_invoice_total():
-            self.invoice_item_table_total.configure(foreground="green")
+            self.invoice_item_table_total.configure(foreground=SUCCESS)
         else:
-            self.invoice_item_table_total.configure(foreground="red")
+            self.invoice_item_table_total.configure(foreground=DANGER)
 
     def _save(self):
         """Connection is passed in so that the insert can be executed within an existing transaction. That way if a part fails data integrity is maintained."""

@@ -40,6 +40,9 @@ from functools import cached_property
 from datetime import datetime
 from decimal import Decimal
 from typing import Callable, Any
+from config import make_logger
+
+logger = make_logger(__name__)
 
 # ---------------------------------------------------------------------------
 # Validators
@@ -161,7 +164,7 @@ class BaseField:
         try:
             return datetime.strptime(f"{date_var.get()} {time_var.get()}", "%Y-%m-%d %H:%M:%S")
         except Exception:
-            print(f"Failed to parse datetime from {date_var.get()} {time_var.get()}")
+            logger.warning(f"Failed to parse datetime from {date_var.get()} {time_var.get()}")
             return None
 
     @staticmethod
@@ -170,7 +173,7 @@ class BaseField:
             date_var.set(value.strftime("%Y-%m-%d"))
             time_var.set(value.strftime("%H:%M:%S"))
         except Exception:
-            print(f"Failed to set datetime from value: {value}")
+            logger.warning(f"Failed to set datetime from value: {value}")
             date_var.set("")
             time_var.set("")
 
@@ -302,7 +305,7 @@ class StringField(BaseField):
         self.handle_string_set(getattr(obj, self._var_attr), value)
 
     def _validate(self, obj):
-        print("Validating StringField")
+        logger.debug("Validating StringField")
         pass  # no validation rules beyond type, which is handled by the getter/setter
 
 class DecimalField(BaseField):
@@ -332,7 +335,7 @@ class DecimalField(BaseField):
     def _validate(self, obj):
         # Delete the text on focus out if its not 
         # a valid decimal with 2 decimal places (e.g. "12.34" or "-5.00")
-        print("Validating DecimalField")
+        logger.debug("Validating DecimalField")
         var = getattr(obj, self._var_attr)
         value = var.get()
         if not re.fullmatch(r"-?(?:\d*\.\d{1,2}|\d+)", value):
@@ -387,7 +390,7 @@ class DateField(BaseField):
 
     def _validate(self, obj):
         # Delete the text on focus out if it's not a valid date in YYYY-MM-DD format
-        print("Validating DateField")
+        logger.debug("Validating DateField")
         var = getattr(obj, self._var_attr)
         value = var.get()
         if value and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
@@ -472,7 +475,7 @@ class DateTimeField(BaseField):
 
     def _validate(self, obj):
         # Delete the text on focus out if it's not a valid date in YYYY-MM-DD format
-        print("Validating DateTimeField")
+        logger.debug("Validating DateTimeField")
         date_var = getattr(obj, self._var_attr)
         value = date_var.get()
         if value and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):

@@ -1,4 +1,5 @@
 from .account_form import AccountForm
+from .account_type_form import AccountTypeForm
 from .image_selector import ImageSelector
 from .statement_item_search_form import StatementItemSearchForm
 from .users_form import UsersForm

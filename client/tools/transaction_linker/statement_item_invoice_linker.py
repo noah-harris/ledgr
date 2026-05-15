@@ -1,8 +1,7 @@
-import tkinter as tk
-from tkinter import messagebox
+from tkinter import ttk, messagebox
 from gui import Modal, Table
 from .._ui_components import InvoiceSearchForm, StatementItemSearchForm
-from color import *
+from style import CARD, PRIMARY_DARKER, BORDER_STRONG, FONT
 import data
 from search import search
 from models.Invoice import Invoice, StatementItem
@@ -13,7 +12,7 @@ from db import get_connection
 class StatementItemInvoiceReceiptLinker(Modal):
 
     def __init__(self, app, statement_item:StatementItem, close_callback):
-        super().__init__(master=app, background_color=WHITE, border_thickness=2, border_color=BLACK, is_fullscreen=True)
+        super().__init__(master=app, background_color=CARD, border_thickness=2, border_color=BORDER_STRONG, is_fullscreen=True)
         self._close_callback = close_callback
         self._selected_invoice: Invoice | None = None
         self._selected_statement_item:StatementItem = statement_item
@@ -24,45 +23,35 @@ class StatementItemInvoiceReceiptLinker(Modal):
         self.grid_rowconfigure(1, weight=1)
 
         # Invoice section (left column)
-        invoice_section = tk.Frame(self, bg=WHITE)
+        invoice_section = ttk.Frame(self, style='Card.TFrame')
         invoice_section.grid(row=0, column=0, rowspan=2, sticky="nsew", padx=(10, 5), pady=10)
         invoice_section.grid_columnconfigure(0, weight=1)
         invoice_section.grid_rowconfigure(1, weight=1)
 
-
-        tk.Label(invoice_section, text="Invoice", font=("Segoe UI", 12, "bold"), bg=WHITE, fg=BOLD_BLUE_TEXT).grid(row=0, column=0, sticky="w", pady=(0, 4))
-        self._invoice_card_slot = tk.Frame(invoice_section, bg=WHITE, highlightthickness=1, highlightbackground=BLACK)
+        ttk.Label(invoice_section, text="Invoice", font=(FONT, 12, 'bold'), foreground=PRIMARY_DARKER, style='Card.TLabel').grid(row=0, column=0, sticky="w", pady=(0, 4))
+        self._invoice_card_slot = ttk.Frame(invoice_section, style='Bordered.Card.TFrame')
         self._invoice_card_slot.grid(row=1, column=0, sticky="nsew")
-        tk.Button(
+        ttk.Button(
             invoice_section, text="Select Invoice", command=self._select_invoice,
-            bg=LIGHT_BLUE_BACKGROUND, fg=BLUE_SMALL_TEXT, activebackground=DARK_BLUE_BACKGROUND,
-            activeforeground=WHITE, relief="flat", font=("Segoe UI", 10)
         ).grid(row=2, column=0, sticky="ew", pady=(8, 0))
 
-
-
-
         # Statement items section (right column)
-        items_section = tk.Frame(self, bg=WHITE)
+        items_section = ttk.Frame(self, style='Card.TFrame')
         items_section.grid(row=0, column=1, rowspan=2, sticky="nsew", padx=(5, 10), pady=10)
         items_section.grid_columnconfigure(0, weight=1)
         items_section.grid_rowconfigure(1, weight=1)
 
-        tk.Label(items_section, text="Statement Items", font=("Segoe UI", 12, "bold"), bg=WHITE, fg=BOLD_BLUE_TEXT).grid(
+        ttk.Label(items_section, text="Statement Items", font=(FONT, 12, 'bold'), foreground=PRIMARY_DARKER, style='Card.TLabel').grid(
             row=0, column=0, sticky="w", pady=(0, 4)
         )
-        self._statement_items_card_slot = tk.Frame(items_section, bg=WHITE)
+        self._statement_items_card_slot = ttk.Frame(items_section, style='Card.TFrame')
         self._statement_items_card_slot.grid(row=1, column=0, sticky="nsew")
         self._statement_items_card_slot.grid_columnconfigure(0, weight=1)
         StatementItemCard(self._statement_items_card_slot, self._selected_statement_item).grid(row=0, column=0, sticky="ew", pady=(0, 4))
 
-
-
         # Link button (full width, bottom)
-        tk.Button(
-            self, text="Link", command=self._link,
-            bg=DARK_BLUE_BACKGROUND, fg=WHITE, activebackground=BLUE_SMALL_TEXT, activeforeground=WHITE,
-            relief="flat", font=("Segoe UI", 11, "bold")
+        ttk.Button(
+            self, text="Link", command=self._link, style='Accent.TButton',
         ).grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=(0, 10))
 
 
@@ -103,7 +92,7 @@ class StatementItemInvoiceReceiptLinker(Modal):
                 InvoiceCard(self._invoice_card_slot, invoice, show_receipts=False).pack(fill="both", expand=True)
             modal.close()
 
-        modal = Modal(self, background_color=WHITE)
+        modal = Modal(self, background_color=CARD)
         invoice_search_form = InvoiceSearchForm(modal)
         invoice_search_results = Table(modal, columns={
             "InvoiceId": {"is_hidden": True},

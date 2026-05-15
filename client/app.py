@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
+import style
 from tools.users_creator import UsersCreator
 from tools.account_creator import AccountCreator
 from tools.statement_loader import StatementLoader
@@ -9,13 +10,16 @@ from tools.organization_creator import OrganizationCreator
 from tools.invoice_manager import InvoiceManager
 from tools.image_linker import ImageLinker
 from tools.transaction_linker import StatementItemInvoiceLinker
+from tools.invoice_item_category_manager import InvoiceItemCategoryManager
 
 class App(tk.Tk):
 
     def __init__(self):
         super().__init__()
+
         self.title("Ledgr v1.0.0.0")
         self.state('zoomed')
+        style.apply_styles(self)
 
         frame = ttk.Frame(self)
         frame.pack(fill="both", expand=True)
@@ -37,6 +41,7 @@ class App(tk.Tk):
 
         misc_menu = tk.Menu(menubar, tearoff=0)
         misc_menu.add_command(label="Organization", command=lambda: OrganizationCreator(self))
+        misc_menu.add_command(label="Invoice Item Categories", command=lambda: InvoiceItemCategoryManager(self))
         menubar.add_cascade(label="Misc", menu=misc_menu)
 
         tool_menu = tk.Menu(menubar, tearoff=0)
@@ -44,6 +49,15 @@ class App(tk.Tk):
         tool_menu.add_command(label="Statement Item / Invoice Linker", command=lambda: StatementItemInvoiceLinker(self))
 
         menubar.add_cascade(label="Tools", menu=tool_menu)
-    
+
+        menu_style = dict(
+            bg=style.PRIMARY, fg=style.TEXT_LIGHT,
+            activebackground=style.HOVER, activeforeground=style.TEXT_LIGHT,
+            relief='flat', borderwidth=0,
+        )
+        menubar.configure(**menu_style)
+        for m in [user_menu, account_menu, misc_menu, tool_menu]:
+            m.configure(**menu_style)
+
         self.config(menu=menubar)
         self.mainloop()

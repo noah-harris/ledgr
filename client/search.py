@@ -50,7 +50,8 @@ def search_one(df:pd.DataFrame, fields:dict) -> tuple[dict, pd.DataFrame]:
 
     match num_results:
         case 0:
-            empty_result = pd.DataFrame({col: None for col in df.columns})
+            empty_dict = {col: None for col in df.columns}
+            empty_result = pd.DataFrame([empty_dict])
             return None, empty_result
         case 1:
             return results.iloc[0].to_dict(), results

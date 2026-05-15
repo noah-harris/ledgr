@@ -77,7 +77,7 @@ class StatementViewer(Tool):
 
     @cached_property
     def image_viewer(self):
-        img = ImageViewer(self)
+        img = ImageViewer(self, show_nav_buttons=False)
         img.grid(row=0, column=1, rowspan=3, sticky="nsew", padx=10, pady=10)
         return img
 

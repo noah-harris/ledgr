@@ -5,7 +5,7 @@ from sqlalchemy import text
 from pathlib import Path
 from db import get_connection
 from functools import cached_property
-from gui import Table
+from gui import ControlPanelTable
 from tools import Tool
 from config import *
 import data
@@ -81,17 +81,17 @@ class InvoiceManager(Tool):
         return frame
 
     @cached_property
-    def search_results_table(self) -> Table:
+    def search_results_table(self) -> ControlPanelTable:
         columns = {
             "Account": {}, "Payee": {}, "TransactionDate": {}, "Method": {}, "Amount": {},
-            "Inv": {"width":20}, "Img": {"width":20},
+            "Inv": {"width": 20}, "Img": {"width": 20},
             "StatementItemId": {"is_hidden": True}, "InvoiceId": {"is_hidden": True},
             "ImageId": {"is_hidden": True}, "StatementId": {"is_hidden": True},
-            "Edit": {"button": ("Edit", self._handle_edit)},
-            "View": {"button": ("View", self._handle_view)},
         }
-        table = Table(self, columns=columns)
+        table = ControlPanelTable(self, columns=columns, title="Search Results")
         table.configure(height=8)
+        table.set_edit_command(self._handle_edit)
+        table.set_view_command(self._handle_view)
         return table
 
 

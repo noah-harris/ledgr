@@ -1,4 +1,4 @@
-import tkinter as tk
+from tkinter import ttk
 
 class DragMixin:
     """
@@ -18,7 +18,7 @@ class DragMixin:
         self._drag_item       = None
         self._drag_rank_col   = rank_col
         self._drag_on_reorder = on_reorder
-        self._indicator       = tk.Frame(self, bg="#0078D7", height=2)
+        self._indicator       = ttk.Frame(self, style='Primary.TFrame', height=2)
 
         self.bind("<ButtonPress-1>",   self._on_button_press)
         self.bind("<B1-Motion>",       self._on_mouse_move)

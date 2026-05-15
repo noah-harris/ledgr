@@ -1,14 +1,14 @@
 import tkinter as tk
+from tkinter import ttk
 from gui import Modal, Table, ImageQueue
 from .._ui_components import AccountTransferForm
 import data
 import pandas as pd
 from tkinter import messagebox
 from db import get_connection
-from tkinter import ttk
 import uuid
 from search import search, search_one
-
+from style import CARD, BORDER_STRONG
 class AccountTransfer(Modal):
 
 	COLUMNS = {
@@ -22,7 +22,7 @@ class AccountTransfer(Modal):
 	}
 
 	def __init__(self, master, image_queue):
-		super().__init__(master, background_color="white", border_thickness=2, border_color="black")
+		super().__init__(master, background_color=CARD, border_thickness=2, border_color=BORDER_STRONG)
 		self._image_queue:ImageQueue = image_queue
 		self.transfer_form = AccountTransferForm(self)
 		self.transfer_form.grid(row=0, column=0, sticky='ew', padx=10, pady=(10, 0))
