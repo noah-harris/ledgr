@@ -65,7 +65,14 @@ def OrganizationTypes() -> pd.DataFrame:
 def InvoiceItemCategory() -> pd.DataFrame:
     with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [v_InvoiceItemCategory]", conn)
-    
+
+def InvoiceItemCategoryLineCounts() -> pd.DataFrame:
+    with get_connection("ldr") as conn:
+        return pd.read_sql(
+            "SELECT CategoryId, COUNT(*) AS LineItems FROM InvoiceItem GROUP BY CategoryId",
+            conn,
+        )
+
 def Statement() -> pd.DataFrame:
     with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [v_Statement]", conn)

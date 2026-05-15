@@ -7,11 +7,21 @@ from sqlalchemy import text
 import data
 from config import make_logger
 from db import get_connection
-from gui import ControlPanelTable
+from gui import ControlPanelTable, StringField
 from tools import Tool
 from .._ui_components.invoice_item_category_form import InvoiceItemCategoryForm
 
 logger = make_logger(__name__)
+
+
+def _setup_combo_filter(combo: ttk.Combobox) -> None:
+    combo._all_values = []
+    combo.bind("<KeyPress>",   StringField._lock_when_single)
+    combo.bind("<KeyRelease>", StringField._filter_values, add="+")
+
+def _set_filterable_values(combo: ttk.Combobox, values: list[str]) -> None:
+    combo._all_values = values
+    combo["values"] = values
 
 
 class InvoiceItemCategoryManager(Tool):
@@ -79,6 +89,7 @@ class _CategoriesTab(ttk.Frame):
             "CategoryDisplayName": {"justify": "left",   "width": 360},
             "Unit":                {"justify": "center", "width":  80},
             "DisplayOrder":        {"justify": "center", "width":  80},
+            "LineItems":           {"justify": "center", "width":  80},
         })
         self._table.set_edit_command(self._handle_edit)
         self._table.set_delete_command(self._handle_delete)
@@ -90,6 +101,9 @@ class _CategoriesTab(ttk.Frame):
     def _refresh_table(self):
         cols = ["CategoryId", "Segment", "Category", "Subcategory", "CategoryDisplayName", "Unit", "DisplayOrder"]
         df = data.InvoiceItemCategory()[cols].sort_values(["Segment", "DisplayOrder"])
+        counts = data.InvoiceItemCategoryLineCounts()
+        df = df.merge(counts, on="CategoryId", how="left")
+        df["LineItems"] = df["LineItems"].fillna(0).astype(int)
         self._table.data = df.fillna("")
 
     def _handle_save(self):
@@ -110,13 +124,26 @@ class _CategoriesTab(ttk.Frame):
         if not sub_category:
             messagebox.showwarning("Validation", "Sub Category is required.")
             return
-        if not display_order_s:
+        if display_order_s:
+            try:
+                display_order = int(display_order_s)
+            except ValueError:
+                messagebox.showwarning("Validation", "Display Order must be a whole number.")
+                return
+        elif self._editing_id is None:
+            try:
+                with get_connection("ldr") as conn:
+                    result = conn.execute(
+                        text("SELECT MAX([DisplayOrder]) FROM [InvoiceItemCategory] WHERE [Segment]=:segment"),
+                        {"segment": segment},
+                    ).scalar()
+                display_order = (int(result) if result is not None else 0) + 10
+            except Exception as e:
+                logger.error("Failed to compute display order: %s", e)
+                messagebox.showerror("Error", f"Failed to compute display order:\n{e}")
+                return
+        else:
             messagebox.showwarning("Validation", "Display Order is required.")
-            return
-        try:
-            display_order = int(display_order_s)
-        except ValueError:
-            messagebox.showwarning("Validation", "Display Order must be a whole number.")
             return
 
         try:
@@ -217,13 +244,15 @@ class _RemapTab(ttk.Frame):
 
         ttk.Label(form_frame, text="From Category:").grid(row=0, column=0, padx=10, pady=10, sticky="w")
         self._from_var = tk.StringVar()
-        self._from_combo = ttk.Combobox(form_frame, textvariable=self._from_var, state="readonly", width=50)
+        self._from_combo = ttk.Combobox(form_frame, textvariable=self._from_var, width=50)
         self._from_combo.grid(row=0, column=1, padx=10, pady=10, sticky="w")
+        _setup_combo_filter(self._from_combo)
 
         ttk.Label(form_frame, text="To Category:").grid(row=1, column=0, padx=10, pady=10, sticky="w")
         self._to_var = tk.StringVar()
-        self._to_combo = ttk.Combobox(form_frame, textvariable=self._to_var, state="readonly", width=50)
+        self._to_combo = ttk.Combobox(form_frame, textvariable=self._to_var, width=50)
         self._to_combo.grid(row=1, column=1, padx=10, pady=10, sticky="w")
+        _setup_combo_filter(self._to_combo)
 
         ttk.Button(left, text="Remap", command=self._handle_remap).pack(padx=10, pady=5, anchor="w")
 
@@ -248,8 +277,8 @@ class _RemapTab(ttk.Frame):
     def _refresh_dropdowns(self):
         names = data.InvoiceItemCategory()["CategoryDisplayName"].tolist()
         names.sort()
-        self._from_combo["values"] = names
-        self._to_combo["values"] = names
+        _set_filterable_values(self._from_combo, names)
+        _set_filterable_values(self._to_combo, names)
 
     def _handle_remap(self):
         from_name = self._from_var.get().strip()
