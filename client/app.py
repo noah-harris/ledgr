@@ -10,6 +10,7 @@ from tools.organization_creator import OrganizationCreator
 from tools.invoice_manager import InvoiceManager
 from tools.image_linker import ImageLinker
 from tools.transaction_linker import StatementItemInvoiceLinker
+from tools.invoice_item_category_manager import InvoiceItemCategoryManager
 
 class App(tk.Tk):
 
@@ -40,6 +41,7 @@ class App(tk.Tk):
 
         misc_menu = tk.Menu(menubar, tearoff=0)
         misc_menu.add_command(label="Organization", command=lambda: OrganizationCreator(self))
+        misc_menu.add_command(label="Invoice Item Categories", command=lambda: InvoiceItemCategoryManager(self))
         menubar.add_cascade(label="Misc", menu=misc_menu)
 
         tool_menu = tk.Menu(menubar, tearoff=0)
