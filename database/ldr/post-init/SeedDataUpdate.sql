@@ -7,6 +7,12 @@ In windows its unique based on LOWER(FileName.FileType) so we can just hash the 
 ==================================================
 */
 
+IF (SELECT COUNT(*) FROM [StatementItem] WHERE [ImageId] IS NOT NULL) > 0
+BEGIN
+	PRINT('Restore Point has been found, do not run update.')
+	RETURN
+END
+
 DROP TABLE IF EXISTS [import].[image]
 SELECT 
 	[image_id], 

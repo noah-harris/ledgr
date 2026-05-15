@@ -24,7 +24,7 @@ PRESSED = "#2F7268"          # Active/pressed button state
 # Surface / neutral layers
 SURFACE = "#F4F0E9"          # Slightly warmer than BACKGROUND, for sections
 SURFACE_ALT = "#EDE7DD"      # Card alt / sidebar
-BORDER = "#DDD6CB"           # Soft warm border
+BORDER = "#DDD6CB"           # Soft warm border 
 BORDER_STRONG = "#C4BCB0"    # Dividers, input borders
 DIVIDER = "#E5DFD4"          # Subtle horizontal rules
 
