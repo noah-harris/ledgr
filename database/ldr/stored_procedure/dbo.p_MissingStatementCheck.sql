@@ -1,4 +1,4 @@
-CREATE PROCEDURE [p_missing_statement_check] 
+CREATE PROCEDURE [p_MissingStatementCheck] 
 AS
 SET NOCOUNT ON;
 

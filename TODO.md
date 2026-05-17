@@ -56,3 +56,5 @@ This task is vague and needs more explenation.
 32a. Additionally, then statement viewer and the statement loader (UploadStatement and reopen excel) should be in the same tool
 
 33. Add a statement item editor / corrector
+
+34. Add Image uploader
