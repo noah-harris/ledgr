@@ -1,52 +1,52 @@
-create procedure p_percent_complete 
-as 
+CREATE PROCEDURE [p_PercentComplete] 
+    AS
+BEGIN
+
+    DECLARE @pct_image VARCHAR(50) =(cast(cast(
+        ( -- Total completed statement items
+            SELECT COUNT(*) 
+            FROM [StatementItem] AS si
+            WHERE si.[ImageId] IS NOT NULL 
+        )
+            /
+        ( -- Total statement items
+            SELECT COUNT(*)*1.0 from [StatementItem]
+        )*100
+    AS DECIMAL(20,2)) AS VARCHAR(50))+'%')
+
+    DECLARE @pct_invoice_image VARCHAR(50) =(cast(cast(
+        ( -- Total completed statement items
+            SELECT COUNT(*) 
+            FROM [StatementItem] AS si
+            WHERE 1=1 
+                AND si.ImageId IS NOT NULL 
+                AND si.InvoiceId IS NOT NULL 
+        )
+            /
+        ( -- Total statement items
+            SELECT COUNT(*)*1.0 FROM [StatementItem]
+        )*100
+    AS DECIMAL(20,2)) AS VARCHAR(50))+'%')
 
 
-declare @pct_image varchar(50) =(cast(cast(
-    ( -- Total completed statement items
-        select count(*) 
-        from statement_item as si
-        where 1=1 
-            and si.image_id is not null 
-    )
-        /
-    ( -- Total statement items
-        select count(*)*1.0 from statement_item
-    )*100
-as decimal(20,2)) as varchar(50))+'%')
+    DECLARE @pct VARCHAR(50) =(cast(cast(
+        ( -- Total completed statement items
+            SELECT COUNT(*) 
+            FROM [StatementItem] AS si
+            WHERE 1=1 
+                AND si.InvoiceId IS NOT NULL 
+                AND si.ImageId IS NOT NULL
+                AND (SELECT SUM(ii.Amount) FROM [InvoiceItem] AS ii WHERE ii.[InvoiceId] = si.[InvoiceId] GROUP BY ii.[InvoiceId]) = si.[Amount]
+                AND (SELECT SUM(ii.Amount) FROM [InvoiceItem] AS ii WHERE ii.[InvoiceId] = si.[InvoiceId] GROUP BY ii.[InvoiceId]) = (SELECT i.[Amount] FROM [Invoice] AS i WHERE i.[InvoiceId] = si.[InvoiceId])
+        )
+            /
+        ( -- Total statement items
+            SELECT COUNT(*)*1.0 FROM [StatementItem]
+        )*100
+    AS DECIMAL(20,2)) AS VARCHAR(50))+'%')
 
-declare @pct_invoice_image varchar(50) =(cast(cast(
-    ( -- Total completed statement items
-        select count(*) 
-        from statement_item as si
-        where 1=1 
-            and si.image_id is not null 
-            and si.invoice_id is not null 
-    )
-        /
-    ( -- Total statement items
-        select count(*)*1.0 from statement_item
-    )*100
-as decimal(20,2)) as varchar(50))+'%')
+    PRINT('PERCENT IMAGE COMPLETE: '+@pct_image)
+    PRINT('PERCENT INVOICE & IMAGE COMPLETE: '+@pct_invoice_image)
+    PRINT('PERCENT COMPLETE: '+@pct)
 
-
-declare @pct varchar(50) =(cast(cast(
-    ( -- Total completed statement items
-        select count(*) 
-        from statement_item as si
-        where 1=1 
-            and si.invoice_id is not null 
-            and si.image_id is not null 
-            and (select sum(ii.amount) from invoice_item as ii where ii.invoice_id = si.invoice_id group by ii.invoice_id) = si.amount
-            and (select sum(ii.amount) from invoice_item as ii where ii.invoice_id = si.invoice_id group by ii.invoice_id) = (select i.total_amount_due from invoice as i where i.invoice_id = si.invoice_id)
-    )
-        /
-    ( -- Total statement items
-        select count(*)*1.0 from statement_item
-    )*100
-as decimal(20,2)) as varchar(50))+'%')
-
-
-print('PERCENT IMAGE COMPLETE: '+@pct_image)
-print('PERCENT INVOICE & IMAGE COMPLETE: '+@pct_invoice_image)
-print('PERCENT COMPLETE: '+@pct)
+END

@@ -54,3 +54,5 @@ This task is vague and needs more explenation.
 
 32. When uploading a statement item in the statement item loaded, when clicking the load statement button it should close the window.
 32a. Additionally, then statement viewer and the statement loader (UploadStatement and reopen excel) should be in the same tool
+
+33. Add a statement item editor / corrector
