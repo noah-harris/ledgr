@@ -36,9 +36,6 @@ class ImageLinker(Tool):
 
         self.image_viewer.next_image_button.config(command=self._handle_next)
         self.image_viewer.prev_image_button.config(command=self._handle_prev)
-        self.bind("<Up>", self.image_viewer._prev_page)
-        self.bind("<Down>", self.image_viewer._next_page)
-
         self._sync_table_to_queue()
 
     # ── Viewer ────────────────────────────────────────────────

@@ -173,8 +173,8 @@ class ImageViewer(ttk.Frame):
         self.canvas.bind("<Button-4>", self._zoom_wheel)
         self.canvas.bind("<Button-5>", self._zoom_wheel)
 
-        self.bind_all("<Up>", self._prev_page)
-        self.bind_all("<Down>", self._next_page)
+        self.canvas.bind("<Up>", self._prev_page)
+        self.canvas.bind("<Down>", self._next_page)
 
 
     # ──────────────────────────────────────────────────────────
@@ -339,6 +339,7 @@ class ImageViewer(ttk.Frame):
     # ──────────────────────────────────────────────────────────
 
     def _start_drag(self, event):
+        self.canvas.focus_set()
         self._drag_start = (event.x, event.y)
 
     def _drag(self, event):
