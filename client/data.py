@@ -252,6 +252,36 @@ def update_statement_item_image_id(conn:engine.Connection, image_id, statement_i
         messagebox.showerror("Error", f"Failed to Update Statement Item ImageId: {str(e)}")
         raise e
 
+def insert_image(conn:engine.Connection, filename:str, filetype:str):
+    try:
+        conn.execute(
+            text("INSERT INTO [v_Image] ([FileName], [FileType]) VALUES (:fn, :ft)"),
+            {"fn": filename, "ft": filetype}
+        )
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to insert image: {str(e)}")
+        raise e
+
+def update_image_filename(conn:engine.Connection, image_id:str, new_filename:str):
+    try:
+        conn.execute(
+            text("UPDATE [Image] SET [FileName]=:fn WHERE [ImageId]=:id"),
+            {"fn": new_filename, "id": image_id}
+        )
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to rename image: {str(e)}")
+        raise e
+
+def delete_image(conn:engine.Connection, image_id:str):
+    try:
+        conn.execute(
+            text("DELETE FROM [Image] WHERE [ImageId]=:id"),
+            {"id": image_id}
+        )
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to delete image: {str(e)}")
+        raise e
+
 def update_statement_item_invoice_id(conn:engine.Connection, invoice_id, statement_item_id):
     try:
         query = text("UPDATE [StatementItem] SET [InvoiceId]=:invoice_id WHERE [StatementItemId]=:statement_item_id")

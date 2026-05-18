@@ -11,6 +11,7 @@ from tools.invoice_manager import InvoiceManager
 from tools.image_linker import ImageLinker
 from tools.transaction_linker import StatementItemInvoiceLinker
 from tools.invoice_item_category_manager import InvoiceItemCategoryManager
+from tools.image_uploader import ImageUploader
 
 class App(tk.Tk):
 
@@ -46,6 +47,7 @@ class App(tk.Tk):
 
         tool_menu = tk.Menu(menubar, tearoff=0)
         tool_menu.add_command(label="Sort Images", command=lambda: ImageLinker(self))
+        tool_menu.add_command(label="Image Uploader", command=lambda: ImageUploader(self))
         tool_menu.add_command(label="Statement Item / Invoice Linker", command=lambda: StatementItemInvoiceLinker(self))
 
         menubar.add_cascade(label="Tools", menu=tool_menu)
