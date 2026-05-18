@@ -103,7 +103,7 @@ class StatementItem(Modal):
 			data.update_statement_item_image_id(conn, self.current_image_id, statement_item_id)
 			data.update_image_sort(conn, self.current_image_id, self.content_type_caller, {"TRANSACTION": 'i', 'RECEIPT':'c'}.get(self.content_type_caller))
 			
-		self._image_queue.remove_current()
+		self.master._remove_image()
 		self.clear()
 
 

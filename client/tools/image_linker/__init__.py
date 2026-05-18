@@ -228,7 +228,7 @@ class ImageLinker(Tool):
             case "STATEMENT":
                 image_id = self.image_queue.get_current().get("ImageId")
                 if image_id:
-                    StatementLoader(self, Image(ImageId=image_id))
+                    StatementLoader(self, Image(ImageId=image_id), on_sorted=self._remove_image)
             case "METHOD":
                 pass
             case "TRANSACTION":

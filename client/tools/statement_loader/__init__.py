@@ -22,8 +22,9 @@ class StatementLoader(Tool):
 
     STATEMENT_TOOL_EXCEL_PATH = Path(__file__).parent / "STATEMENT TOOL.xlsx"
 
-    def __init__(self, master: tk.Tk, image: Image = None):
+    def __init__(self, master: tk.Tk, image: Image = None, on_sorted: callable = None):
         super().__init__(master)
+        self._on_sorted = on_sorted
 
         ttk.Button(self, text="Upload Statement", command=self._save_statement).pack(pady=10)
         ttk.Button(self, text="Reopen Excel", command=self._reopen_excel).pack(pady=(0, 10))
@@ -147,6 +148,9 @@ class StatementLoader(Tool):
 
             with get_connection("ldr") as conn:
                 df.to_sql("ve_StatementStatementItem", conn, if_exists="append", index=False)
+
+            if callable(self._on_sorted):
+                self._on_sorted()
 
         except Exception as e:
             with get_connection("ldr") as conn:

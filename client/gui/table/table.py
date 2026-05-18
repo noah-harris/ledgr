@@ -4,6 +4,39 @@ from tkinter import ttk
 import tkinter.font as tkfont
 from style import SURFACE
 
+
+def _encode_for_tcl(value) -> str:
+    """Encode characters above U+FFFF as UTF-16 surrogate pairs for Tcl/Tk."""
+    s = "" if value is None else str(value)
+    out = []
+    for ch in s:
+        cp = ord(ch)
+        if cp > 0xFFFF:
+            cp -= 0x10000
+            out.append(chr(0xD800 | (cp >> 10)))
+            out.append(chr(0xDC00 | (cp & 0x3FF)))
+        else:
+            out.append(ch)
+    return "".join(out)
+
+
+def _decode_from_tcl(value) -> str:
+    """Decode UTF-16 surrogate pairs stored by Tcl/Tk back to real characters."""
+    s = "" if value is None else str(value)
+    out = []
+    i = 0
+    while i < len(s):
+        cp = ord(s[i])
+        if 0xD800 <= cp <= 0xDBFF and i + 1 < len(s):
+            next_cp = ord(s[i + 1])
+            if 0xDC00 <= next_cp <= 0xDFFF:
+                out.append(chr(0x10000 + ((cp - 0xD800) << 10) + (next_cp - 0xDC00)))
+                i += 2
+                continue
+        out.append(s[i])
+        i += 1
+    return "".join(out)
+
 class Table(ttk.Treeview):
     """
         A simple wrapper around ttk.Treeview that provides a convenient interface for displaying tabular data from a pandas DataFrame.
@@ -207,7 +240,7 @@ class Table(ttk.Treeview):
             self.delete(row)
         tags = ("_disabled",) if not getattr(self, "_table_enabled", True) else ()
         for _, row in self._data.iterrows():
-            self.insert("", "end", values=tuple(row), tags=tags)
+            self.insert("", "end", values=tuple(_encode_for_tcl(v) for v in row), tags=tags)
         if self._button_columns:
             self._schedule_place_buttons(10)
 
@@ -252,7 +285,7 @@ class Table(ttk.Treeview):
         row_id = selected_row_ids[0]
         item = self.item(row_id).get("values")
         n = len(self._columns)
-        return dict(zip(self._columns, item[:n]))
+        return dict(zip(self._columns, [_decode_from_tcl(v) for v in item[:n]]))
 
     def clear(self):
         self.data = pd.DataFrame(columns=self._columns)

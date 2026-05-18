@@ -172,7 +172,7 @@ class AccountTransfer(Modal):
 			data.update_statement_item_invoice_id(conn, to_invoice_id, to_statement_item["StatementItemId"])
 			data.update_image_sort(conn, self.current_image_id, content_type="ACCOUNT TRANSFER", status_type="c")
 			
-		self._image_queue.remove_current()
+		self.master._remove_image()
 		messagebox.showinfo("Success", "The image has been linked to the matching transactions.")
 		self.clear()
 

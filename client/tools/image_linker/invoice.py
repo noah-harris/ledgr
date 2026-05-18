@@ -176,7 +176,7 @@ class Invoice(Modal):
                 data.insert_invoice(conn, invoice_data, invoice_items)
                 data.update_image_sort(conn, self.current_image_id, 'INVOICE', 'c')
 
-            self._image_queue.remove_current()
+            self.master._remove_image()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to save invoice: {str(e)}")
             return None
