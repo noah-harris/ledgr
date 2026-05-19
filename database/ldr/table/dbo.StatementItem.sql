@@ -17,6 +17,5 @@ CREATE TABLE [StatementItem] (
     CONSTRAINT [FK_StatementItem_Payee] FOREIGN KEY ([PayeeId]) REFERENCES [Payee]([PayeeId]),
     CONSTRAINT [FK_StatementItem_Invoice] FOREIGN KEY ([InvoiceId]) REFERENCES [Invoice]([InvoiceId]) ON DELETE SET NULL,
     CONSTRAINT [UQ_StatementItem] UNIQUE ([StatementId], [PayeeId], [TransactionDate], [Amount]),
-    CONSTRAINT [CK_PostDate_After_TransactionDate] CHECK ([TransactionDate] <= DATEADD(SECOND, -1, DATEADD(DAY, 1, CAST([PostDate] AS DATETIME2(0))))));
-
-CREATE CLUSTERED INDEX [IX_StatementItem] ON [StatementItem]([StatementId] ASC, [PostDate] ASC);
+    CONSTRAINT [CK_PostDate_After_TransactionDate] CHECK ([TransactionDate] <= DATEADD(SECOND, -1, DATEADD(DAY, 1, CAST([PostDate] AS DATETIME2(0)))))
+);

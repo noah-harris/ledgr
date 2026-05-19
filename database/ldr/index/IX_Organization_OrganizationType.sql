@@ -1,0 +1,1 @@
+CREATE CLUSTERED INDEX [IX_Organization_OrganizationType] ON [Organization] ([OrganizationTypeId]);

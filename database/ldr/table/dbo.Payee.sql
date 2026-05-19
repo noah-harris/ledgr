@@ -3,4 +3,3 @@ CREATE TABLE [Payee] (
     [PayeeType] VARCHAR(50) NOT NULL,
     CONSTRAINT [PK_Payee] PRIMARY KEY NONCLUSTERED ([PayeeId])
 );
-CREATE CLUSTERED INDEX [IX_Payee_PayeeType] ON [Payee] ([PayeeType]);

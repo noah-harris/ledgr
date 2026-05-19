@@ -14,7 +14,7 @@ BEGIN
         SELECT 
             [UsersId],
             ISNULL([ImageId], CAST(HASHBYTES('MD5', CAST(LOWER([FileName] + '.' + [FileType]) AS NVARCHAR(861))) AS UNIQUEIDENTIFIER)) AS [ImageId],
-            [FileName], 
+            CAST([FileName] AS NVARCHAR(255)) AS [FileName],
             [FileType],
             [StatusType],
             [StatusName],

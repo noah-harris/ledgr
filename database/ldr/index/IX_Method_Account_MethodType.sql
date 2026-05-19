@@ -1,0 +1,1 @@
+CREATE CLUSTERED INDEX [IX_Method_Account_MethodType] ON [Method] ([AccountId], [MethodTypeId]);

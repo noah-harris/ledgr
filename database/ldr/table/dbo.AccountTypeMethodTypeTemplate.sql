@@ -7,4 +7,3 @@ CREATE TABLE [AccountTypeMethodTypeTemplate] (
     CONSTRAINT [FK_AccountTypeMethodTypeTemplate_AccountType] FOREIGN KEY ([AccountTypeId]) REFERENCES [AccountType]([AccountTypeId]),
     CONSTRAINT [FK_AccountTypeMethodTypeTemplate_MethodType] FOREIGN KEY ([MethodTypeId]) REFERENCES [MethodType]([MethodTypeId])
 );
-

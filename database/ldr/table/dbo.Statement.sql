@@ -11,5 +11,3 @@ CREATE TABLE [Statement] (
     CONSTRAINT [FK_Statement_Account] FOREIGN KEY ([AccountId]) REFERENCES [Account]([AccountId]),
     CONSTRAINT [FK_Statement_Image] FOREIGN KEY ([ImageId]) REFERENCES [Image]([ImageId]) ON DELETE SET NULL
 );
-
-CREATE CLUSTERED INDEX [IX_Statement_Account] ON [Statement]([AccountId] ASC, [StatementDate] ASC);

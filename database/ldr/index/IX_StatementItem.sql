@@ -1,0 +1,1 @@
+CREATE CLUSTERED INDEX [IX_StatementItem] ON [StatementItem]([StatementId] ASC, [PostDate] ASC);

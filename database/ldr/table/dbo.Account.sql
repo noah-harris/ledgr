@@ -15,4 +15,3 @@ CREATE TABLE [Account] (
     CONSTRAINT [FK_Account_Currency] FOREIGN KEY ([Currency]) REFERENCES [Currency]([Currency])
 );
 
-CREATE CLUSTERED INDEX [IX_Account_Users_Organization_AccountType] ON [Account] ([UsersId], [OrganizationId], [AccountTypeId]);

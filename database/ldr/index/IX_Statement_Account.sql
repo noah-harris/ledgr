@@ -1,0 +1,1 @@
+CREATE CLUSTERED INDEX [IX_Statement_Account] ON [Statement]([AccountId] ASC, [StatementDate] ASC);

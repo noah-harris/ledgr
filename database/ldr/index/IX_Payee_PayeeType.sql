@@ -1,0 +1,1 @@
+CREATE CLUSTERED INDEX [IX_Payee_PayeeType] ON [Payee] ([PayeeType]);

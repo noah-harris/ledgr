@@ -18,5 +18,3 @@ CREATE TABLE [Invoice] (
     CONSTRAINT [FK_Invoice_Image] FOREIGN KEY ([ImageId]) REFERENCES [Image]([ImageId]) ON DELETE SET NULL,
     CONSTRAINT [UQ_Payee_InvoiceDate_Amount] UNIQUE ([PayeeId], [InvoiceDate], [Amount])
 );
-
-CREATE CLUSTERED INDEX [IX_Invoice_InvoiceDate] ON [Invoice] ([UsersId], [PayeeId], [InvoiceDate], [Amount]);

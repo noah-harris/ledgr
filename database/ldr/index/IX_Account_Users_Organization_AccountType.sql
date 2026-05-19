@@ -1,0 +1,1 @@
+CREATE CLUSTERED INDEX [IX_Account_Users_Organization_AccountType] ON [Account] ([UsersId], [OrganizationId], [AccountTypeId]);

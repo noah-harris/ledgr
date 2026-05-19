@@ -1,0 +1,1 @@
+CREATE CLUSTERED INDEX [IX_InvoiceItemCategory] ON [InvoiceItemCategory] ([Segment], [DisplayOrder]);

@@ -6,5 +6,5 @@ CREATE TABLE [InvoiceItemCategory] (
     [Unit] NVARCHAR(50) NOT NULL,
     [DisplayOrder] INT NOT NULL,
     [Description] NVARCHAR(255) NULL,
-    CONSTRAINT [PK_InvoiceItemCategory] PRIMARY KEY CLUSTERED ([CategoryId])
+    CONSTRAINT [PK_InvoiceItemCategory] PRIMARY KEY NONCLUSTERED ([CategoryId])
 )

@@ -21,8 +21,8 @@ SELECT
 
     CASE
         WHEN p.[PayeeType] = 'Organization' THEN o.[Segment]
-        WHEN p.[PayeeType] = 'Account' THEN 'BANKING'
-        WHEN p.[PayeeType] = 'Users' THEN 'PERSONAL'
+        WHEN p.[PayeeType] = 'Account' THEN 'SUMMARY'
+        WHEN p.[PayeeType] = 'Users' THEN 'UNCATEGORIZED'
         ELSE NULL
     END AS [Segment],
 
