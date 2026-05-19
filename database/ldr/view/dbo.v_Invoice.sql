@@ -7,7 +7,7 @@ SELECT
 	p.[PayeeType],
 	p.[OrganizationTypeName],
 	p.[Segment],
-	--p.[Category],
+	p.[Category],
 	i.[InvoiceDate],
 	i.[DueDate],
 	i.[InvoiceNumber],

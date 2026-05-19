@@ -1,9 +1,11 @@
 {
+    "unused": [
+        {"database":"ldr", "file":"SeedDataInsert.sql"},
+        {"database":"ldr", "file":"SeedDataUpdate.sql"}
+    ],
     "post-init": [
         {"file": "create_budget_tool_login.py"},
-        {"database":"ldr", "file":"SeedDataInsert.sql"},
         {"file": "upload_images.py"},
-        {"database":"ldr", "file":"SeedDataUpdate.sql"},
         {"database":"ldr", "file":"FixEmojiFileNames.sql"}
     ]
 }

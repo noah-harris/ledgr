@@ -27,6 +27,11 @@ SELECT
     END AS [Segment],
 
     CASE
+        WHEN p.[PayeeType] = 'Organization' THEN o.[Category]
+        ELSE NULL
+    END AS [Category],
+
+    CASE
         WHEN p.[PayeeType] = 'Organization' THEN o.[Description]
         WHEN p.[PayeeType] = 'Account' THEN a.[Description]
         WHEN p.[PayeeType] = 'Users' THEN 'Users: ' + u.[Email]

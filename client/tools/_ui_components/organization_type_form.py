@@ -24,12 +24,17 @@ class OrganizationTypeForm(Form):
         values=_segment_values,
         row=2, col=0, colspan=2,
     )
+    category = StringField(
+        label="Category:",
+        row=3, col=0, colspan=2,
+    )
     description = StringField(
         label="Description:",
-        row=3, col=0, colspan=2,
+        row=4, col=0, colspan=2,
     )
 
     type_name_widget: ttk.Entry
     is_account_provider_widget: ttk.Combobox
     segment_widget: ttk.Combobox
+    category_widget: ttk.Entry
     description_widget: ttk.Entry

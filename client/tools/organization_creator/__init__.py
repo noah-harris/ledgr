@@ -208,6 +208,7 @@ class _OrganizationTypesTab(ttk.Frame):
             "OrganizationTypeName": {"justify": "left",   "width": 200},
             "IsAccountProvider":    {"justify": "center", "width": 140},
             "Segment":              {"justify": "center", "width": 130},
+            "Category":             {"justify": "left",   "width": 160},
             "Description":          {"justify": "left",   "width": 280},
         })
         self._table.set_edit_command(self._handle_edit)
@@ -223,7 +224,7 @@ class _OrganizationTypesTab(ttk.Frame):
         cb["values"] = segments
         cb._all_values = segments
 
-        df = data.OrganizationTypes()[["OrganizationTypeId", "OrganizationTypeName", "IsAccountProvider", "Segment", "Description"]]
+        df = data.OrganizationTypes()[["OrganizationTypeId", "OrganizationTypeName", "IsAccountProvider", "Segment", "Category", "Description"]]
         df = df.copy()
         df["IsAccountProvider"] = df["IsAccountProvider"].map(lambda x: "Yes" if x else "No")
         self._table.data = df.fillna("")
@@ -233,6 +234,7 @@ class _OrganizationTypesTab(ttk.Frame):
         type_name = form_data.get("type_name")
         is_acct_str = form_data.get("is_account_provider")
         segment = form_data.get("segment")
+        category = form_data.get("category")
         description = form_data.get("description")
 
         if not type_name:
@@ -244,6 +246,9 @@ class _OrganizationTypesTab(ttk.Frame):
         if not segment:
             messagebox.showwarning("Validation", "Segment is required.")
             return
+        if not category:
+            messagebox.showwarning("Validation", "Category is required.")
+            return
         if not description:
             messagebox.showwarning("Validation", "Description is required.")
             return
@@ -254,14 +259,14 @@ class _OrganizationTypesTab(ttk.Frame):
             with get_connection("ldr") as conn:
                 if self._editing_id is None:
                     conn.execute(text(
-                        "INSERT INTO [OrganizationType] (OrganizationTypeId, OrganizationTypeName, IsAccountProvider, Segment, Description) "
-                        "VALUES (:id, :name, :is_acct, :segment, :desc)"
-                    ), {"id": str(uuid.uuid4()), "name": type_name, "is_acct": is_acct, "segment": segment, "desc": description})
+                        "INSERT INTO [OrganizationType] (OrganizationTypeId, OrganizationTypeName, IsAccountProvider, Segment, Category, Description) "
+                        "VALUES (:id, :name, :is_acct, :segment, :category, :desc)"
+                    ), {"id": str(uuid.uuid4()), "name": type_name, "is_acct": is_acct, "segment": segment, "category": category, "desc": description})
                 else:
                     conn.execute(text(
-                        "UPDATE [OrganizationType] SET OrganizationTypeName=:name, IsAccountProvider=:is_acct, Segment=:segment, Description=:desc "
+                        "UPDATE [OrganizationType] SET OrganizationTypeName=:name, IsAccountProvider=:is_acct, Segment=:segment, Category=:category, Description=:desc "
                         "WHERE OrganizationTypeId=:id"
-                    ), {"id": self._editing_id, "name": type_name, "is_acct": is_acct, "segment": segment, "desc": description})
+                    ), {"id": self._editing_id, "name": type_name, "is_acct": is_acct, "segment": segment, "category": category, "desc": description})
             self._handle_cancel()
             self._refresh_table()
         except Exception as e:
@@ -283,6 +288,7 @@ class _OrganizationTypesTab(ttk.Frame):
             "type_name":           row["OrganizationTypeName"],
             "is_account_provider": row["IsAccountProvider"],
             "segment":             row["Segment"],
+            "category":            row["Category"],
             "description":         row.get("Description"),
         })
         self._save_btn.config(text="Save")
