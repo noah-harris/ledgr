@@ -26,6 +26,8 @@ class OrganizationTypeForm(Form):
     )
     category = StringField(
         label="Category:",
+        widget="combobox",
+        values=[],
         row=3, col=0, colspan=2,
     )
     description = StringField(
@@ -36,5 +38,25 @@ class OrganizationTypeForm(Form):
     type_name_widget: ttk.Entry
     is_account_provider_widget: ttk.Combobox
     segment_widget: ttk.Combobox
-    category_widget: ttk.Entry
+    category_widget: ttk.Combobox
     description_widget: ttk.Entry
+
+    def __init__(self, master):
+        super().__init__(master)
+        df = data.InvoiceItemCategory()
+        self._categories_by_segment = (
+            df.groupby("Segment")["Category"]
+            .apply(lambda s: sorted(s.drop_duplicates().tolist()))
+            .to_dict()
+        )
+        self.segment_widget.bind("<<ComboboxSelected>>", self._on_segment_selected, add="+")
+
+    def _on_segment_selected(self, _event=None):
+        self._update_category_options(self.segment_widget.get(), clear=True)
+
+    def _update_category_options(self, segment: str, clear: bool = True):
+        categories = self._categories_by_segment.get(segment, [])
+        self.category_widget.config(values=categories)
+        self.category_widget._all_values = categories
+        if clear:
+            self.category_widget.set("")

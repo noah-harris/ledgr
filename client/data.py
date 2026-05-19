@@ -97,7 +97,7 @@ def Organizations() -> pd.DataFrame:
 
 def OrganizationTypes() -> pd.DataFrame:
     with get_connection("ldr") as conn:
-        return pd.read_sql("SELECT * FROM [OrganizationType]", conn)
+        return pd.read_sql("SELECT * FROM [OrganizationType] ORDER BY [OrganizationTypeName]", conn)
 
 def InvoiceItemCategory() -> pd.DataFrame:
     with get_connection("ldr") as conn:

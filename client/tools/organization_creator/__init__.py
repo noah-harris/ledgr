@@ -66,11 +66,20 @@ class _OrganizationsTab(ttk.Frame):
         self._cancel_btn = ttk.Button(btn_frame, text="Clear", command=self._handle_cancel, style="Ghost.TButton")
         self._cancel_btn.grid(row=0, column=1)
 
-        # ── Right: table ──────────────────────────────────────────
+        # ── Right: sort controls + table ─────────────────────────
         right = ttk.Frame(self)
         right.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
         right.columnconfigure(0, weight=1)
-        right.rowconfigure(0, weight=1)
+        right.rowconfigure(0, weight=0)
+        right.rowconfigure(1, weight=1)
+
+        self._sort_var = tk.StringVar(value="Name")
+        sort_frame = ttk.Frame(right)
+        sort_frame.grid(row=0, column=0, sticky="w", padx=5, pady=(5, 0))
+        ttk.Label(sort_frame, text="Sort by:").pack(side="left", padx=(0, 6))
+        ttk.Radiobutton(sort_frame, text="Name", variable=self._sort_var, value="Name").pack(side="left", padx=(0, 8))
+        ttk.Radiobutton(sort_frame, text="Type", variable=self._sort_var, value="Type").pack(side="left")
+        self._sort_var.trace_add("write", lambda *_: self._apply_sort())
 
         self._table = ControlPanelTable(right, title="Organizations", columns={
             "OrganizationId":       {"is_hidden": True},
@@ -82,7 +91,7 @@ class _OrganizationsTab(ttk.Frame):
         self._table.set_edit_command(self._handle_edit)
         self._table.set_delete_command(self._handle_delete)
         self._table.set_create_command(self._handle_create)
-        self._table.grid(row=0, column=0, sticky="nsew")
+        self._table.grid(row=1, column=0, sticky="nsew")
 
         self._refresh_table()
 
@@ -92,8 +101,16 @@ class _OrganizationsTab(ttk.Frame):
         cb["values"] = types
         cb._all_values = types
 
-        df = data.Organizations()[["OrganizationId", "OrganizationName", "OrganizationTypeName", "Segment", "Description"]]
-        self._table.data = df.fillna("")
+        self._raw_df = data.Organizations()[["OrganizationId", "OrganizationName", "OrganizationTypeName", "Segment", "Category", "Description"]]
+        self._apply_sort()
+
+    def _apply_sort(self):
+        df = self._raw_df.fillna("")
+        if self._sort_var.get() == "Name":
+            df = df.sort_values("OrganizationName")
+        else:
+            df = df.sort_values(["OrganizationTypeName", "OrganizationName"])
+        self._table.data = df[["OrganizationId", "OrganizationName", "OrganizationTypeName", "Segment", "Description"]]
 
     def _handle_save(self):
         form_data = self._form.get()
@@ -197,11 +214,20 @@ class _OrganizationTypesTab(ttk.Frame):
         self._cancel_btn = ttk.Button(btn_frame, text="Clear", command=self._handle_cancel, style="Ghost.TButton")
         self._cancel_btn.grid(row=0, column=1)
 
-        # ── Right: table ──────────────────────────────────────────
+        # ── Right: sort controls + table ─────────────────────────
         right = ttk.Frame(self)
         right.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
         right.columnconfigure(0, weight=1)
-        right.rowconfigure(0, weight=1)
+        right.rowconfigure(0, weight=0)
+        right.rowconfigure(1, weight=1)
+
+        self._sort_var = tk.StringVar(value="Name")
+        sort_frame = ttk.Frame(right)
+        sort_frame.grid(row=0, column=0, sticky="w", padx=5, pady=(5, 0))
+        ttk.Label(sort_frame, text="Sort by:").pack(side="left", padx=(0, 6))
+        ttk.Radiobutton(sort_frame, text="Name", variable=self._sort_var, value="Name").pack(side="left", padx=(0, 8))
+        ttk.Radiobutton(sort_frame, text="Type", variable=self._sort_var, value="Type").pack(side="left")
+        self._sort_var.trace_add("write", lambda *_: self._apply_sort())
 
         self._table = ControlPanelTable(right, title="Organization Types", columns={
             "OrganizationTypeId":   {"is_hidden": True},
@@ -214,7 +240,7 @@ class _OrganizationTypesTab(ttk.Frame):
         self._table.set_edit_command(self._handle_edit)
         self._table.set_delete_command(self._handle_delete)
         self._table.set_create_command(self._handle_create)
-        self._table.grid(row=0, column=0, sticky="nsew")
+        self._table.grid(row=1, column=0, sticky="nsew")
 
         self._refresh_table()
 
@@ -224,10 +250,17 @@ class _OrganizationTypesTab(ttk.Frame):
         cb["values"] = segments
         cb._all_values = segments
 
-        df = data.OrganizationTypes()[["OrganizationTypeId", "OrganizationTypeName", "IsAccountProvider", "Segment", "Category", "Description"]]
-        df = df.copy()
+        self._raw_df = data.OrganizationTypes()[["OrganizationTypeId", "OrganizationTypeName", "IsAccountProvider", "Segment", "Category", "Description"]]
+        self._apply_sort()
+
+    def _apply_sort(self):
+        df = self._raw_df.copy().fillna("")
+        if self._sort_var.get() == "Name":
+            df = df.sort_values("OrganizationTypeName")
+        else:
+            df = df.sort_values(["Segment", "Category", "OrganizationTypeName"])
         df["IsAccountProvider"] = df["IsAccountProvider"].map(lambda x: "Yes" if x else "No")
-        self._table.data = df.fillna("")
+        self._table.data = df[["OrganizationTypeId", "OrganizationTypeName", "IsAccountProvider", "Segment", "Category", "Description"]]
 
     def _handle_save(self):
         form_data = self._form.get()
@@ -288,9 +321,10 @@ class _OrganizationTypesTab(ttk.Frame):
             "type_name":           row["OrganizationTypeName"],
             "is_account_provider": row["IsAccountProvider"],
             "segment":             row["Segment"],
-            "category":            row["Category"],
             "description":         row.get("Description"),
         })
+        self._form._update_category_options(row["Segment"], clear=False)
+        self._form.set({"category": row["Category"]})
         self._save_btn.config(text="Save")
         self._cancel_btn.config(text="Cancel")
 
