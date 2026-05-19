@@ -9,3 +9,4 @@ from .invoice_item_table import InvoiceItemTable
 from .invoice_search_form import InvoiceSearchForm
 from .invoice_card import InvoiceCard
 from .statement_item_card import StatementItemCard
+from .statement_item_form import StatementItemForm

@@ -17,6 +17,43 @@ def get_category_id(name:str) -> str | None:
         return df["CategoryId"].iloc[0] if not df.empty else None
 
 
+def get_method_id(display_name: str) -> str | None:
+    with get_connection("ldr") as conn:
+        df = pd.read_sql_query(
+            text("SELECT [MethodId] FROM [v_Method] WHERE [MethodDisplayName] = :name"),
+            conn, params={"name": display_name},
+        )
+        return df["MethodId"].iloc[0] if not df.empty else None
+
+
+def get_method_display_name(statement_item_id: str) -> str | None:
+    with get_connection("ldr") as conn:
+        df = pd.read_sql_query(
+            text("SELECT [MethodDisplayName] FROM [v_StatementItem] WHERE [StatementItemId] = :id"),
+            conn, params={"id": statement_item_id},
+        )
+        return df["MethodDisplayName"].iloc[0] if not df.empty else None
+
+
+def update_statement_item(conn: engine.Connection, item: dict):
+    try:
+        conn.execute(text("""
+            UPDATE [StatementItem] SET
+                [PayeeId]         = :PayeeId,
+                [MethodId]        = :MethodId,
+                [TransactionDate] = :TransactionDate,
+                [PostDate]        = :PostDate,
+                [ReferenceNumber] = :ReferenceNumber,
+                [Amount]          = :Amount,
+                [Description]     = :Description,
+                [ImageId]         = :ImageId
+            WHERE [StatementItemId] = :StatementItemId
+        """), item)
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to update statement item: {str(e)}")
+        raise e
+
+
 # SELECT DATA
 def Invoice() -> pd.DataFrame:
     with get_connection("ldr") as conn:

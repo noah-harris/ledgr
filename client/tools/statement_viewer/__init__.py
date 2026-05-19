@@ -9,6 +9,7 @@ from tools import Tool
 from config import *
 from resolve_image_bytes import resolve_image_bytes
 from pathlib import Path
+from tools.statement_viewer.edit import StatementItemEditor
 
 class StatementViewer(Tool):
 
@@ -35,6 +36,7 @@ class StatementViewer(Tool):
 
         self.account_combobox.bind("<<ComboboxSelected>>", self._handle_account_selection)
         self.statement_combobox.bind("<<ComboboxSelected>>", self._handle_statement_selection)
+        self.statement_item_table.bind("<Double-1>", self._handle_item_double_click)
 
     # ──────────────────────────────────────────────────────────
     # EVENT HANDLERS
@@ -56,6 +58,15 @@ class StatementViewer(Tool):
         self.statement_table.data = empty_df
         self.statement_item_table.data = empty_df
         self.image_viewer.path = None
+
+    def _handle_item_double_click(self, event):
+        row = self.statement_item_table.get_selected_row()
+        if not row:
+            return
+        statement_item_id = row.get("StatementItemId")
+        if not statement_item_id:
+            return
+        StatementItemEditor(self, str(statement_item_id).upper())
 
     def _handle_statement_selection(self, event):
         if self.account_id is None or self.statement_id is None:
@@ -139,6 +150,7 @@ class StatementViewer(Tool):
         columns = {
             "Payee": {}, "Method": {}, "Transaction Date": {}, "Post Date": {},
             "Reference Number": {}, "Description": {}, "Amount": {},
+            "StatementItemId": {"is_hidden": True},
         }
         statement_item_table = Table(self, columns=columns)
         statement_item_table.grid(row=2, column=0, padx=10, pady=10, sticky="nsew")
@@ -234,15 +246,14 @@ class StatementViewer(Tool):
             data = pd.read_sql_query(
                 text("""
                     SELECT
-                        [AccountDisplayName] AS [Account],
-                        [StatementDate] AS [Statement Date],
-                        [PayeeName] AS [Payee],
+                        [PayeeName]         AS [Payee],
                         [MethodDisplayName] AS [Method],
-                        [TransactionDate] AS [Transaction Date],
-                        [PostDate] AS [Post Date],
-                        [ReferenceNumber] AS [Reference Number],
-                        [Description] AS [Description],
-                        [Amount] AS [Amount]
+                        [TransactionDate]   AS [Transaction Date],
+                        [PostDate]          AS [Post Date],
+                        [ReferenceNumber]   AS [Reference Number],
+                        [Description]       AS [Description],
+                        [Amount]            AS [Amount],
+                        [StatementItemId]
                     FROM [v_StatementItem]
                     WHERE [StatementId] = :statement_id
                     ORDER BY [PostDate] DESC, [TransactionDate] DESC
