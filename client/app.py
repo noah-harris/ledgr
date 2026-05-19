@@ -35,20 +35,23 @@ class App(tk.Tk):
         menubar.add_cascade(label="Users", menu=user_menu)
 
         account_menu = tk.Menu(menubar, tearoff=0)
-        account_menu.add_command(label="Create Account", command=lambda: AccountCreator(self))
-        account_menu.add_command(label="Create Statement", command=lambda: StatementLoader(self))
-        account_menu.add_command(label="View Statement", command=lambda: StatementViewer(self))
+        account_menu.add_command(label="Edit", command=lambda: AccountCreator(self))
         menubar.add_cascade(label="Account", menu=account_menu)
 
-        misc_menu = tk.Menu(menubar, tearoff=0)
-        misc_menu.add_command(label="Organization", command=lambda: OrganizationCreator(self))
-        misc_menu.add_command(label="Invoice Item Categories", command=lambda: InvoiceItemCategoryManager(self))
-        menubar.add_cascade(label="Misc", menu=misc_menu)
+        statement_menu = tk.Menu(menubar, tearoff=0)
+        statement_menu.add_command(label="Create", command=lambda: StatementLoader(self))
+        statement_menu.add_command(label="View & Edit", command=lambda: StatementViewer(self))
+        menubar.add_cascade(label="Statement", menu=statement_menu)
+
+        organization_menu = tk.Menu(menubar, tearoff=0)
+        organization_menu.add_command(label="Edit", command=lambda: OrganizationCreator(self))
+        menubar.add_cascade(label="Organization", menu=organization_menu)
 
         tool_menu = tk.Menu(menubar, tearoff=0)
         tool_menu.add_command(label="Sort Images", command=lambda: ImageLinker(self))
-        tool_menu.add_command(label="Image Uploader", command=lambda: ImageUploader(self))
         tool_menu.add_command(label="Statement Item / Invoice Linker", command=lambda: StatementItemInvoiceLinker(self))
+        tool_menu.add_command(label="Image Uploader", command=lambda: ImageUploader(self))
+        tool_menu.add_command(label="Invoice Item Categories", command=lambda: InvoiceItemCategoryManager(self))
 
         menubar.add_cascade(label="Tools", menu=tool_menu)
 
@@ -58,7 +61,7 @@ class App(tk.Tk):
             relief='flat', borderwidth=0,
         )
         menubar.configure(**menu_style)
-        for m in [user_menu, account_menu, misc_menu, tool_menu]:
+        for m in [user_menu, account_menu, organization_menu, tool_menu, statement_menu]:
             m.configure(**menu_style)
 
         self.config(menu=menubar)
