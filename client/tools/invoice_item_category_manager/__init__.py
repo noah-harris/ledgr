@@ -100,7 +100,7 @@ class _CategoriesTab(ttk.Frame):
 
     def _refresh_table(self):
         cols = ["CategoryId", "Segment", "Category", "Subcategory", "CategoryDisplayName", "Unit", "DisplayOrder"]
-        df = data.InvoiceItemCategory()[cols].sort_values(["Segment", "DisplayOrder"])
+        df = data.InvoiceItemCategory()[cols].sort_values(["Segment", "Category", "Subcategory"])
         counts = data.InvoiceItemCategoryLineCounts()
         df = df.merge(counts, on="CategoryId", how="left")
         df["LineItems"] = df["LineItems"].fillna(0).astype(int)

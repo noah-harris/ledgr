@@ -21,18 +21,22 @@
 14. [UI] App logo / icon — create .ico file and apply via self.iconbitmap() in App.
 
 -- Features --
-15. [Feature] Invoice editor — implement full edit UI (pre-fill InvoiceForm + InvoiceItemTable from existing invoice, save via data.update_invoice()).
+15. [Feature]~~ Invoice editor — implement full edit UI (pre-fill InvoiceForm + InvoiceItemTable from existing invoice, save via data.update_invoice()).~~
 16. [Feature] Main page dashboard — replace placeholder with panels for: Missing Statements, Account Transfer Issues, Images to Sort, Statement Items with No Invoice, Orphan Invoices, Invoice Amount Mismatches.
 17. [Feature] Budget system — Budget table (name, start_date, end_date) + BudgetCategory (budget_id, category_id, target_amount). UI to create/edit budgets; compare actual invoice item spend per category vs target.
 18. [Feature] ~~Assign segments to Organizations — for each Organization without a segment classification, allow user to assign one via the OrganizationCreator UI or a seed script.~~ DONE (OrganizationCreator now has full Organization + OrganizationType editor)
+33. ~~Add a statement item editor / corrector~~
+34. ~~Add Image uploader~~
+29. Add a units table
 
 -- Refactor --
 19. [Refactor] ~~Clean up bare print() calls across client/ — replace with logger.debug() / logger.warning() as appropriate.~~ DONE
 24. [Refactor] Finish the implementation of the user system. The functionality is not really scoped yet other than 1, a user should not be able to see other users information, 2, if 2 users are for example married there finances are combined. THis means that not only can they see each others information, but all objects are shared so that makes the database part a little less straight forward.
 This is a very large task and needs careful consideration.
 
-23. [Refactor] Orgasnization Type needs another degree of freedom on it. Add a category column.
-
+23. [Refactor] ~~Orgasnization Type needs another degree of freedom on it. Add a category column.~~
+32. When uploading a statement item in the statement item loaded, when clicking the load statement button it should close the window.
+32a. Additionally, then statement viewer and the statement loader (UploadStatement and reopen excel) should be in the same tool
 
 -- Data --
 20. [Data] Add data.v_OrphanInvoices() — invoices not linked to any StatementItem.
@@ -46,14 +50,16 @@ This task is vague and needs more explenation.
 27. ~~In the Invoice Item Category editor, I would like to see how many line items currently exist for it in the databse~~
 28. ~~I would like to the display order just automatically increment by 10 to the largest one from the segment. So if the PAYCHECK Segment has a maximum display order of 190, when a usesr createds a new PAYCHECK InvoiceItemCategory if the Display order field is empty, it becomes 200.~~
 
-29. Add a units table
-
+-- Bug --
 30. There is a bug where when clicking the Create statement menu button, the modal appears in the top left corner not in the center of the screen.
 
 
-32. When uploading a statement item in the statement item loaded, when clicking the load statement button it should close the window.
-32a. Additionally, then statement viewer and the statement loader (UploadStatement and reopen excel) should be in the same tool
+31. I dont like the Display Order System
+32. Subcatgegory should be SubCategory everywhere
 
-33. Add a statement item editor / corrector
 
-34. ~~Add Image uploader~~
+
+View of line item toggle detail view simple view. Colors???
+Categories should be colors / configurable
+
+
