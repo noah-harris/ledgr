@@ -28,6 +28,8 @@ SELECT
 
     CASE
         WHEN p.[PayeeType] = 'Organization' THEN o.[Category]
+        WHEN p.[PayeeType] = 'Account' THEN 'ACCOUNT TRANSFER'
+        WHEN p.[PayeeType] = 'Users' THEN 'UNCATEGORIZED'
         ELSE NULL
     END AS [Category],
 
