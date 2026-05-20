@@ -42,7 +42,7 @@ This is a very large task and needs careful consideration.
 20. [Data] Add data.v_OrphanInvoices() — invoices not linked to any StatementItem.
 21. [Data] Add data.v_InvoiceAmountMismatch() — invoices where Invoice.Amount ≠ sum(InvoiceItem.Amount) or ≠ StatementItem.Amount.
 22. [Data] Add data.p_MissingStatementCheck() — wrapper for stored proc that detects gaps in statement coverage per account.
-23a. [Data] Update the new Category column with values.
+23a. [Data] ~~Update the new Category column with values.~~
 25. [Data] The invoice item category system does not necessarily need to be refactored, some of the categories just need a little more specificity.
 This task is vague and needs more explenation.
 
@@ -57,7 +57,7 @@ This task is vague and needs more explenation.
 31. I dont like the Display Order System
 32. Subcatgegory should be SubCategory everywhere
 
-
+33. Add Data Validator Tool. This tool brings together the invoice data, image and statement item data. The purpose is to mark the bill as correct
 
 View of line item toggle detail view simple view. Colors???
 Categories should be colors / configurable

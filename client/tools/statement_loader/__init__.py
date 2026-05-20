@@ -16,6 +16,7 @@ import tkinter as tk
 from config import *
 from models import Image
 from .._ui_components.image_selector import ImageSelector
+from ..organization_creator import OrganizationCreator
 
 
 class StatementLoader(Tool):
@@ -48,6 +49,9 @@ class StatementLoader(Tool):
         os.startfile(self.temp_excel_tool_path)
 
         self.deiconify()
+
+        self._org_tool = OrganizationCreator(self.master)
+        self._org_tool.protocol("WM_DELETE_WINDOW", self._org_tool.destroy)
 
     # ──────────────────────────────────────────────────────────
     # IMAGE SELECTION
@@ -108,6 +112,8 @@ class StatementLoader(Tool):
     def _cleanup_and_close(self):
         if 'temp_excel_tool_path' in self.__dict__:
             shutil.rmtree(self.temp_excel_tool_path.parent, ignore_errors=True)
+        if hasattr(self, '_org_tool') and self._org_tool.winfo_exists():
+            self._org_tool.destroy()
         self.destroy()
         self.master.deiconify()
         self.master.state('zoomed')
