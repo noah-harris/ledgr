@@ -92,8 +92,14 @@ class _OrganizationsTab(ttk.Frame):
         self._table.set_delete_command(self._handle_delete)
         self._table.set_create_command(self._handle_create)
         self._table.grid(row=1, column=0, sticky="nsew")
+        self._table.bind("<Double-1>", self._on_row_double_click)
 
         self._refresh_table()
+
+    def _on_row_double_click(self, _=None):
+        row = self._table.get_selected_row()
+        if row:
+            self._handle_edit(row)
 
     def _refresh_table(self):
         types = data.OrganizationTypes()["OrganizationTypeName"].tolist()
@@ -241,8 +247,14 @@ class _OrganizationTypesTab(ttk.Frame):
         self._table.set_delete_command(self._handle_delete)
         self._table.set_create_command(self._handle_create)
         self._table.grid(row=1, column=0, sticky="nsew")
+        self._table.bind("<Double-1>", self._on_row_double_click)
 
         self._refresh_table()
+
+    def _on_row_double_click(self, _=None):
+        row = self._table.get_selected_row()
+        if row:
+            self._handle_edit(row)
 
     def _refresh_table(self):
         segments = data.InvoiceItemCategory()["Segment"].drop_duplicates().sort_values().tolist()
