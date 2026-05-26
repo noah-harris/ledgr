@@ -35,7 +35,6 @@ Ledgr is a desktop application for managing personal finances, bank statements, 
 - **Document Linking** — Attach PDF and image files to statements and invoices; track processing status per document
 - **Organization Registry** — Maintain a registry of banks and financial institutions
 - **Database Restore Points** — Timestamped automatic database backups before destructive operations
-- **Audit Trail** — Database-level triggers on core tables for insert and delete events
 
 ---
 
@@ -67,35 +66,22 @@ The application follows a three-tier architecture: a modular Tkinter GUI, a pand
 
 ```
 ledgr/
-├── client/                  # Desktop application
-│   ├── app.py               # Main entry point
-│   ├── data.py              # Data access functions
-│   ├── db.py                # Database connection pool
-│   ├── models/              # Domain models (Invoice, Image, StatementItem)
-│   ├── tools/               # Feature modules
-│   │   ├── account_creator/
-│   │   ├── statement_loader/
-│   │   ├── statement_viewer/
-│   │   ├── invoice_manager/
-│   │   ├── image_linker/
-│   │   ├── transaction_linker/
-│   │   ├── organization_creator/
-│   │   └── users_creator/
-│   └── gui/                 # Shared UI components (forms, tables, styling)
+├── client/                      # Desktop application
+│   ├── app.py                   # Main entry point
+│   ├── data.py                  # Data access functions
+│   ├── db.py                    # Database connection pool
+│   ├── models/                  # Domain models (Invoice, Image, StatementItem)
+│   ├── tools/                   # Feature modules
+│   └── gui/                     # Shared UI components (forms, tables, styling)
 │
-├── db-init/                 # Database schema deployment (runs in Docker)
-│   ├── deploy.py            # Deployment orchestration script
-│   ├── Tables/              # Table definitions (T-SQL)
-│   ├── Views/               # View definitions
-│   └── Programmability/     # Stored procedures, functions, triggers
-│
-├── db-seed/                 # Sample data for local development
-│   ├── seed.py
-│   └── SeedDataInsert.sql
-│
-├── shared/                  # Cross-module utilities
-│   ├── config.py
-│   └── db.py
+├── database/                    
+│   ├── index/                   # Table indexes
+│   ├── scalar_valued_function/  # Scalar valued functions ie f(x) = x+1           
+│   ├── schema/
+    ├── stored_procedure/
+    ├── table/
+    ├── trigger/
+│   └── view/     
 │
 ├── docker-compose.yml
 ├── Dockerfile
@@ -121,10 +107,43 @@ The schema is organized around these core entities:
 | `Organization` | Banks and financial institutions |
 | `Payee` | Vendor/payee reference data |
 | `Method` | Payment methods |
+| `Budget` | Budget table dictates a budgets name + StartDate & EndDate, BudgetItem table dictates the values for the Segment, Category, SubCategory combinations |
 
 All primary keys use `UNIQUEIDENTIFIER` (GUID). The schema includes insert and audit triggers on core tables, and a scalar function `fn_StripNonAlphanumeric` for data normalization. Views are provided for both display and DML operations.
 
 ---
+
+### Information
+#### **Users**
+Currently the user system is not implemented.
+
+#### **Account**
+An account is simply something a collection of money. This could be a bank account, a wallet, a PayPal etc.
+
+#### **Method**
+An account can have many Payment Methods assigned to it. For example, an account transfer or cash deposit.
+
+#### **Transaction**
+When a "Transaction" is reffered to, it is talking about this Invoice to StatementItem relationship.
+
+##### **Statement Item**
+Statements are loaded into the database currently through the Statement Excel Tool. 
+
+Each row in StatementItem equates to a swipe of your credit card, a transfer etc. (Each row is manually assigned a payee and a method)
+
+##### **Invoice**
+Conceptially an Invoice is a bill that needs to be paid. (A bill can be partially or fully paid and my multiple different people (Accounts)). 
+Thus Invoices are a one-to-many relationship with StatementItems.
+
+The InvoiceItem table houses the line items of the invoice. So items you purchases from the store get a seperate line item as well as tax and or any discounts.
+Each row in the InvoiceItem table has an InvoiceItemCategory associated with it.
+
+#### **Budgets**
+Recall that each Invoice Item is linked to an InvoiceItemCategory, which has three levels: Segment, Category, and Subcategory.
+Budgets let you set a spending target at any of these levels for a given time period.
+
+For example, you could set a $500 target for the Groceries segment from 2026-04-01 to 2026-04-30.
+Targets can also be narrowed to a Category — Groceries > Food at $400 — or down to a Subcategory, like Groceries > Food > Dairy at $40.
 
 ## Getting Started
 
@@ -139,37 +158,40 @@ All primary keys use `UNIQUEIDENTIFIER` (GUID). The schema includes insert and a
 Create a `.env` file in the project root with the following values:
 
 ```env
-DOCKER_DB_IP=db
-DOCKER_DB_INTERNAL_PORT=1433
-DOCKER_DB_EXTERNAL_PORT=1434
-DOCKER_DB_USERNAME=sa
-DOCKER_DB_PASSWORD=
-
-IMAGE_DIRECTORY_LOCATION=
+DB_USERNAME=
+DB_PASSWORD=
+INTERNAL_PORT=1433
+EXTERNAL_PORT=1434
+DIALECT=mssql
+HOST=db
+SQL_PROJECT_DIRECTORY= (In my case) "//Primary-server/d/Repositories/ledgr/database"
+RESTORE_POINT_DIRECTORY= (In my case) "//Primary-server/d/Repositories/!BACKUPS/ledgr"
+IMAGE_DIRECTORY_LOCATION= (In my case) http://192.168.0.238:8000
+RESTORE_POINT_INTERVAL_MINUTES=5
+RESTORE_POINT_RETENTION=100
 ```
 
 | Variable | Description |
 |---|---|
-| `DOCKER_DB_IP` | Hostname of the SQL Server container. Use `db` when connecting from inside Docker, or `127.0.0.1` from the host machine. |
-| `DOCKER_DB_INTERNAL_PORT` | Port SQL Server listens on inside the container (default `1433`). |
-| `DOCKER_DB_EXTERNAL_PORT` | Port exposed to the host machine. Used by the desktop client to connect. |
-| `DOCKER_DB_USERNAME` | SQL Server login username. |
-| `DOCKER_DB_PASSWORD` | SQL Server login password. |
-| `IMAGE_DIRECTORY_LOCATION` | Base URL of the image/document file server. Used to fetch and register documents in the Image table. |
+| `HOST` | Hostname of the SQL Server container. Use `db` when connecting from inside Docker, or `127.0.0.1` from the host machine. |
+| `INTERNAL_PORT` | Port SQL Server listens on inside the container (default `1433`). |
+| `EXTERNAL_PORT` | Port exposed to the host machine. Used by the desktop client to connect. |
+| `DB_USERNAME` | SQL Server login username. |
+| `DB_PASSWORD` | SQL Server login password. |
+| `SQL_PROJECT_DIRECTORY` | Directory of the database project files. |
+| `RESTORE_POINT_DIRECTORY` | Directory that backups get saved too. |
+| `IMAGE_DIRECTORY_LOCATION` | SQL Server login password. |
+| `RESTORE_POINT_INTERVAL_MINUTES` | Backup interval in minutes. |
+| `RESTORE_POINT_RETENTION` | How many backups are saved of the database data before they start getting culled. Note that if no data has changed, it will not create a new backup. |
 
 ### 2. Start the database and deploy the schema
 
 ```powershell
-./start_db.ps1
+docker compose up --pull always --build
 ```
+Builds and starts the docker container for the database and db-deployer
+Make sure to rebuild and pull dependencies in case the db-deployer has been updated.
 
-This builds the Docker images, starts SQL Server, waits for it to become healthy, then automatically runs the `db-init` container to deploy the full database schema.
-
-To also load sample data:
-
-```powershell
-./start_db_seed_data.ps1
-```
 
 ### 3. Launch the application
 
@@ -181,21 +203,13 @@ In a separate terminal:
 
 This installs Python dependencies and launches the Tkinter desktop GUI.
 
-### 4. Stop the database
+### 4. Stopping the docker container
 
 ```powershell
-./stop_db.ps1
+docker compose down
 ```
 
-This saves a restore point before bringing the containers down.
-
----
-
-## Data Seeding
-
-`seed.py` is the Docker Compose entry point for the `db-seed` service. When run, it attempts to import and execute `local.py`. If `local.py` is not present, it does nothing. This keeps all environment-specific seeding logic out of source control — `local.py` is created locally per machine and never committed.
-
----
+Nothing fancy
 
 ## License
 
