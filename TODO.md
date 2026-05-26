@@ -29,6 +29,50 @@
 34. ~~Add Image uploader~~
 29. Add a units table
 
+
+
+
+
+
+
+41. [Feature] Add Data Validator Tool. This tool is to track data that has been manually verified. 
+StatementItem table and Invoice table will need the column IsValidated BIT added to it.
+
+Each StatementItem and Invoice should be validated.
+For StatementItem this means confirming that,
+1. The Invoice associated with the InvoiceId of the StatementItem is correct
+2. The Image associated with the ImageId of the StatementItem is correct
+
+Only consider StatementItems where the InvoiceId and ImageId is not null
+
+Criteria:
+1. The PayeeId of the StatementItem and Invoice are equal
+2. The Amount column of the StatementItem row equals the Amount in the Invoice Table and the Sum of the Amount from the Invoice in the InvoiceItem table
+3. The InvoiceDate must be less than or equal to the TransactionDate
+4. The PostDate must be less than or equal to the TransactionDate
+5. If the Content type of the ImageId Associated with StatementItem equals TRANSACTION, then the ImageIds of the StatementItem and Associated Invoice should be equal
+6. If the Content type of the ImageId Associated with StatementItem equals RECEIPT, then the ImageIds of the StatementItem and Associated Invoice should not be equal
+7. The Image of the StatementItem should be manually confirmed to be assigned to the correct statement item
+
+For Invoice this means confirming that,
+1. The PayeeId of any assiociated StatementItems with the Invoice should be equal
+2. The amount of the Invoice should be equal to that of the sum of the associated IntoiceItem rows as well as the sum of any associated StatementItem amounts
+3. The InvoiceDate must be less than or equal to and associated StatementITem
+4. If the Content type of the ImageId Associated with Invoice equals INVOICE, then the ImageIds of the StatementItem and Associated STatementITem should not be equal
+5. The Image of the StatementItem should be manually confirmed to be assigned to the correct statement item if the ContentType of the Invoice Image is INVOICE
+
+If an invoice is marked as invalid,
+
+Deleting means doing exactly the following,
+1. Setting the InvoiceId and ImageId for the targeted StatementItems  = NULL
+2. Setting the ContentType = NULL and StatusType = 'u' for ImageSort
+3. Deleting The targeted InvoiceId and InvoiceItem IDs (is cascade so this should be automatic.)
+
+
+
+
+
+
 -- Refactor --
 19. [Refactor] ~~Clean up bare print() calls across client/ — replace with logger.debug() / logger.warning() as appropriate.~~ DONE
 24. [Refactor] Finish the implementation of the user system. The functionality is not really scoped yet other than 1, a user should not be able to see other users information, 2, if 2 users are for example married there finances are combined. THis means that not only can they see each others information, but all objects are shared so that makes the database part a little less straight forward.
@@ -40,8 +84,6 @@ This is a very large task and needs careful consideration.
 
 -- Data --
 20. [Data] Add data.v_OrphanInvoices() — invoices not linked to any StatementItem.
-21. [Data] Add data.v_InvoiceAmountMismatch() — invoices where Invoice.Amount ≠ sum(InvoiceItem.Amount) or ≠ StatementItem.Amount.
-22. [Data] Add data.p_MissingStatementCheck() — wrapper for stored proc that detects gaps in statement coverage per account.
 23a. [Data] ~~Update the new Category column with values.~~
 25. [Data] The invoice item category system does not necessarily need to be refactored, some of the categories just need a little more specificity.
 This task is vague and needs more explenation.
@@ -57,9 +99,12 @@ This task is vague and needs more explenation.
 31. I dont like the Display Order System
 32. Subcatgegory should be SubCategory everywhere
 
-33. Add Data Validator Tool. This tool brings together the invoice data, image and statement item data. The purpose is to mark the bill as correct
 
-View of line item toggle detail view simple view. Colors???
-Categories should be colors / configurable
+
+
+
+
+
+40. View of line item toggle detail view simple view. Colors??? Categories should be colors / configurable
 
 

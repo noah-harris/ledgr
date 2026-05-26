@@ -99,7 +99,7 @@ class AccountTransfer(Modal):
 
 			invoice_data = {
 				"InvoiceId": from_invoice_id,
-				"PayeeId": to_statement_item["PayeeId"],
+				"PayeeId": from_statement_item["PayeeId"],
 				"InvoiceDate": from_statement_item["TransactionDate"],
 				"Amount": from_statement_item["Amount"],
 				"ImageId": self.current_image_id,
@@ -146,7 +146,7 @@ class AccountTransfer(Modal):
 
 			invoice_data = {
 				"InvoiceId": to_invoice_id,
-				"PayeeId": from_statement_item["PayeeId"],
+				"PayeeId": to_statement_item["PayeeId"],
 				"InvoiceDate": from_statement_item["TransactionDate"],
 				"Amount": self.transfer_form.transfer_amount*-1,
 				"ImageId": self.current_image_id,
