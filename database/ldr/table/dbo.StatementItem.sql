@@ -10,6 +10,7 @@ CREATE TABLE [StatementItem] (
     [Amount] DECIMAL(18, 2) NOT NULL,
     [Description] NVARCHAR(1000) NOT NULL,
     [ImageId] UNIQUEIDENTIFIER NULL,
+    [IsValidated] BIT NULL,
     CONSTRAINT [PK_StatementItem] PRIMARY KEY NONCLUSTERED ([StatementItemId]),
     CONSTRAINT [FK_StatementItem_Method] FOREIGN KEY ([MethodId]) REFERENCES [Method]([MethodId]),
     CONSTRAINT [FK_StatementItem_Image] FOREIGN KEY ([ImageId]) REFERENCES [Image]([ImageId]) ON DELETE SET NULL,
