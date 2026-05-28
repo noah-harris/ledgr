@@ -5,6 +5,7 @@ db-seed/SeedDataInsert.sql
 db-seed/SeedDataUpdate.sql
 .idea
 .claude
+database\status.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
