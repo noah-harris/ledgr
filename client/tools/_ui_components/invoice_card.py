@@ -53,7 +53,8 @@ class Header(ttk.Frame):
         left_col.pack(side="left", fill="both", expand=True)
         line_1_text = f"INVOICE · {invoice.InvoiceNumber or f'{invoice.PayeeName}-{invoice.InvoiceDate.strftime('%Y%m%d')}'}"
         line_2_text = invoice.PayeeName.title()
-        line_3_text =f"{'singleworddetail'.title()} · {invoice.InvoiceDate.strftime('%m/%d/%Y %I:%M:%S %p')}"
+        # line_3_text =f"{'singleworddetail'.title()} · {invoice.InvoiceDate.strftime('%m/%d/%Y %I:%M:%S %p')}"
+        line_3_text =f"{invoice.InvoiceDate.strftime('%m/%d/%Y %I:%M:%S %p')}"
         ttk.Label(left_col, text=line_1_text, font=(FONT, 8), style='Subtle.Muted.TLabel').pack(anchor="w")
         ttk.Label(left_col, text=line_2_text, font=(FONT, 14, 'bold'), style='Subtle.TLabel').pack(anchor="w")
         ttk.Label(left_col, text=line_3_text, font=(FONT, 8), style='Subtle.Muted.TLabel').pack(anchor="w")

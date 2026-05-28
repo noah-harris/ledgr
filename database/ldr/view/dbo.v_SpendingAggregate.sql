@@ -46,4 +46,3 @@ SELECT
 FROM CTE_Dateless AS c
 JOIN [Days] AS d ON d.[CalendarDate] = CAST([TransactionDate] AS DATE)
 GROUP BY CalendarYear, MonthName, Segment
-ORDER BY CalendarYear, MonthName, Segment
