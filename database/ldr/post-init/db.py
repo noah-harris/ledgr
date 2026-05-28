@@ -37,4 +37,3 @@ def get_autocommit_connection(database:str):
     finally:
         conn.close()
         engine.dispose()
-

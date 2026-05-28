@@ -36,12 +36,6 @@ services:
       
       IMAGE_DIRECTORY: ${IMAGE_DIRECTORY}
 
-      BUDGET_TOOL_USERNAME: ${BUDGET_TOOL_USERNAME}
-      BUDGET_TOOL_PASSWORD: ${BUDGET_TOOL_PASSWORD}
-      BUDGET_TOOL_HOST: ${BUDGET_TOOL_HOST}
-      BUDGET_TOOL_PORT: ${BUDGET_TOOL_PORT}
-
-
     volumes:
       - restore:/app/restore
       - sql-scripts:/app/sql-scripts
