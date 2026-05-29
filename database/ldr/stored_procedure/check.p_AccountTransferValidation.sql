@@ -1,4 +1,4 @@
-CREATE PROCEDURE [p_AccountTransferValidation] 
+CREATE PROCEDURE [check].[p_AccountTransferValidation] 
 AS
 SET NOCOUNT ON;
 BEGIN
