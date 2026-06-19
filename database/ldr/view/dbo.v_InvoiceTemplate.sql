@@ -1,6 +1,9 @@
 CREATE VIEW [v_InvoiceTemplate]
     AS
 SELECT
-    [InvoiceTemplateId],
-    [InvoiceTemplateName]
-FROM [InvoiceTemplate]
+    it.[InvoiceTemplateId],
+    it.[InvoiceTemplateName],
+    it.[PayeeId],
+    p.[PayeeName]
+FROM [InvoiceTemplate] AS it
+LEFT JOIN [v_Payee] AS p ON p.[PayeeId] = it.[PayeeId]

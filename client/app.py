@@ -12,6 +12,7 @@ from tools.image_linker import ImageLinker
 from tools.transaction_linker import StatementItemInvoiceLinker
 from tools.invoice_item_category_manager import InvoiceItemCategoryManager
 from tools.image_uploader import ImageUploader
+from tools.invoice_template_creator import InvoiceTemplateCreator
 
 class App(tk.Tk):
 
@@ -52,6 +53,7 @@ class App(tk.Tk):
         tool_menu.add_command(label="Statement Item / Invoice Linker", command=lambda: StatementItemInvoiceLinker(self))
         tool_menu.add_command(label="Image Uploader", command=lambda: ImageUploader(self))
         tool_menu.add_command(label="Invoice Item Categories", command=lambda: InvoiceItemCategoryManager(self))
+        tool_menu.add_command(label="Invoice Templates", command=lambda: InvoiceTemplateCreator(self))
 
         menubar.add_cascade(label="Tools", menu=tool_menu)
 

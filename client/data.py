@@ -8,13 +8,15 @@ from tkinter import messagebox
 def get_payee_id(name:str) -> str | None:
     with get_connection("ldr") as conn:
         df = pd.read_sql_query(text("SELECT [PayeeId] FROM [v_Payee] WHERE [PayeeName] = :name"), conn, params={"name": name})
-        return df["PayeeId"].iloc[0] if not df.empty else None
+        payee:str | None = df["PayeeId"].iloc[0].upper() if not df.empty else None
+        return payee
 
 
 def get_category_id(name:str) -> str | None:
     with get_connection("ldr") as conn:
         df = pd.read_sql_query(text("SELECT [CategoryId] FROM [v_InvoiceItemCategory] WHERE [CategoryDisplayName] = :name"), conn, params={"name": name})
-        return df["CategoryId"].iloc[0] if not df.empty else None
+        category:str | None = df["CategoryId"].iloc[0].upper() if not df.empty else None
+        return category
 
 
 def get_method_id(display_name: str) -> str | None:
@@ -23,7 +25,8 @@ def get_method_id(display_name: str) -> str | None:
             text("SELECT [MethodId] FROM [v_Method] WHERE [MethodDisplayName] = :name"),
             conn, params={"name": display_name},
         )
-        return df["MethodId"].iloc[0] if not df.empty else None
+        method:str | None = df["MethodId"].iloc[0].upper() if not df.empty else None
+        return method
 
 
 def get_method_display_name(statement_item_id: str) -> str | None:
