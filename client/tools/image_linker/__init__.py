@@ -6,7 +6,8 @@ from gui import ImageViewer, ImageQueue, Table
 from config import *
 import data
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
+import requests
 from .statement_item import StatementItem
 from .invoice import Invoice
 from .account_transfer import AccountTransfer
@@ -52,6 +53,8 @@ class ImageLinker(Tool):
         queue = raw_queue.to_dict(orient="records")
         for record in queue:
             filename = record["ImageFileName"]
+            filename = filename.replace("#", "%23")
+            filename = filename.replace(",", "")
             if filename:
                 record["filetype"] = Path(filename).suffix.lstrip(".")
                 record["filename_stem"] = Path(filename).stem
@@ -125,7 +128,10 @@ class ImageLinker(Tool):
             row=0, column=0, padx=(0, 8)
         )
         ttk.Button(btn_frame, text="Skip", style="Ghost.TButton", command=self._handle_skip).grid(
-            row=0, column=1
+            row=0, column=1, padx=(0, 8)
+        )
+        ttk.Button(btn_frame, text="Delete", style="Danger.TButton", command=self._handle_delete).grid(
+            row=0, column=2
         )
 
         return panel
@@ -215,6 +221,35 @@ class ImageLinker(Tool):
                 {"image_id": image_id},
             )
         logger.debug("Image marked as skipped")
+        self._remove_image()
+
+    def _handle_delete(self):
+        current = self.image_queue.get_current()
+        if not current:
+            return
+        image_id = current.get("ImageId")
+        if not image_id:
+            return
+
+        filename = current.get("ImageFileName", "")
+        if not messagebox.askyesno(
+            "Confirm Delete",
+            f"Permanently delete '{filename}'?\n\n"
+            "This will remove the file from the server and the database record.",
+        ):
+            return
+
+        with get_connection("ldr") as conn:
+            data.delete_image(conn, image_id)
+
+        try:
+            resp = requests.delete(f"{IMAGE_DIRECTORY}/{filename}", timeout=5)
+            if not resp.ok:
+                logger.warning(f"Server delete returned {resp.status_code}: {resp.text}")
+        except Exception as e:
+            logger.warning(f"Server delete failed: {e}")
+
+        logger.debug("Image deleted")
         self._remove_image()
 
     # ── Content type routing ──────────────────────────────────
