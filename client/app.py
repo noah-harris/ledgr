@@ -13,6 +13,7 @@ from tools.transaction_linker import StatementItemInvoiceLinker
 from tools.invoice_item_category_manager import InvoiceItemCategoryManager
 from tools.image_uploader import ImageUploader
 from tools.invoice_template_creator import InvoiceTemplateCreator
+from tools.data_fix_logger import DataFixLogger
 
 class App(tk.Tk):
 
@@ -54,6 +55,7 @@ class App(tk.Tk):
         tool_menu.add_command(label="Image Uploader", command=lambda: ImageUploader(self))
         tool_menu.add_command(label="Invoice Item Categories", command=lambda: InvoiceItemCategoryManager(self))
         tool_menu.add_command(label="Invoice Templates", command=lambda: InvoiceTemplateCreator(self))
+        tool_menu.add_command(label="Data Fix Log", command=lambda: DataFixLogger(self))
 
         menubar.add_cascade(label="Tools", menu=tool_menu)
 

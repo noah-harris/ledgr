@@ -131,6 +131,10 @@ def InvoiceItemCategoryLineCounts() -> pd.DataFrame:
             conn,
         )
 
+def DataFix() -> pd.DataFrame:
+    with get_connection("ldr") as conn:
+        return pd.read_sql("SELECT * FROM [DataFix]", conn)
+
 def Statement() -> pd.DataFrame:
     with get_connection("ldr") as conn:
         return pd.read_sql("SELECT * FROM [v_Statement]", conn)
