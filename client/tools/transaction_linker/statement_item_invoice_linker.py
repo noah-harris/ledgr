@@ -1,4 +1,6 @@
+import tkinter as tk
 from tkinter import ttk, messagebox
+import pandas as pd
 from gui import Modal, Table
 from .._ui_components import InvoiceSearchForm, StatementItemSearchForm
 from style import CARD, PRIMARY_DARKER, BORDER_STRONG, FONT
@@ -11,15 +13,17 @@ from db import get_connection
 
 class StatementItemInvoiceReceiptLinker(Modal):
 
-    def __init__(self, app, statement_item:StatementItem, close_callback):
+    def __init__(self, app, statement_item:StatementItem, queue_df:pd.DataFrame, close_callback):
         super().__init__(master=app, background_color=CARD, border_thickness=2, border_color=BORDER_STRONG, is_fullscreen=True)
         self._close_callback = close_callback
         self._selected_invoice: Invoice | None = None
         self._selected_statement_item:StatementItem = statement_item
-        self._item_row = 0
+        self._queue_df = queue_df.copy()
+        self._syncing_table = False
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(2, weight=0)
         self.grid_rowconfigure(1, weight=1)
 
         # Invoice section (left column)
@@ -35,9 +39,9 @@ class StatementItemInvoiceReceiptLinker(Modal):
             invoice_section, text="Select Invoice", command=self._select_invoice,
         ).grid(row=2, column=0, sticky="ew", pady=(8, 0))
 
-        # Statement items section (right column)
+        # Statement items section (center column)
         items_section = ttk.Frame(self, style='Card.TFrame')
-        items_section.grid(row=0, column=1, rowspan=2, sticky="nsew", padx=(5, 10), pady=10)
+        items_section.grid(row=0, column=1, rowspan=2, sticky="nsew", padx=5, pady=10)
         items_section.grid_columnconfigure(0, weight=1)
         items_section.grid_rowconfigure(1, weight=1)
 
@@ -49,16 +53,84 @@ class StatementItemInvoiceReceiptLinker(Modal):
         self._statement_items_card_slot.grid_columnconfigure(0, weight=1)
         StatementItemCard(self._statement_items_card_slot, self._selected_statement_item).grid(row=0, column=0, sticky="ew", pady=(0, 4))
 
+        # Queue section (right column)
+        queue_section = ttk.Frame(self, style='Card.TFrame')
+        queue_section.grid(row=0, column=2, rowspan=2, sticky="nsew", padx=(5, 10), pady=10)
+        queue_section.grid_columnconfigure(0, weight=1)
+        queue_section.grid_rowconfigure(1, weight=1)
+
+        header = ttk.Frame(queue_section, style='Card.TFrame')
+        header.grid(row=0, column=0, sticky="ew", pady=(0, 4))
+        header.columnconfigure(0, weight=1)
+        ttk.Label(header, text="Queue", font=(FONT, 12, 'bold'), foreground=PRIMARY_DARKER, style='Card.TLabel').grid(row=0, column=0, sticky="w")
+        self._queue_count_var = tk.StringVar()
+        ttk.Label(header, textvariable=self._queue_count_var, style='Card.TLabel').grid(row=0, column=1, sticky="e")
+
+        self._queue_table = Table(queue_section, columns={
+            "StatementItemId": {"is_hidden": True},
+            "Payee": {"justify": "left", "width": 150},
+            "TransactionDate": {"justify": "center", "width": 100},
+            "Amount": {"justify": "right", "width": 80},
+            "Account": {"justify": "left", "width": 120},
+        })
+        self._queue_table.grid(row=1, column=0, sticky="nsew")
+        self._queue_table.bind("<<TreeviewSelect>>", self._handle_queue_table_select)
+
+        self._refresh_queue_table()
+        self._sync_table_to_queue()
+
         # Link button (full width, bottom)
         ttk.Button(
             self, text="Link", command=self._link, style='Accent.TButton',
-        ).grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=(0, 10))
+        ).grid(row=2, column=0, columnspan=3, sticky="ew", padx=10, pady=(0, 10))
 
 
     def _clear_invoice_card_slot(self):
         for child in self._invoice_card_slot.winfo_children():
             child.destroy()
 
+    def _refresh_statement_item_card(self):
+        for child in self._statement_items_card_slot.winfo_children():
+            child.destroy()
+        StatementItemCard(self._statement_items_card_slot, self._selected_statement_item).grid(
+            row=0, column=0, sticky="ew", pady=(0, 4)
+        )
+
+    # ── Queue helpers ─────────────────────────────────────────
+
+    def _refresh_queue_table(self):
+        display_df = self._queue_df[["StatementItemId", "Payee", "TransactionDate", "Amount", "Account"]].copy()
+        self._queue_table.data = display_df
+        self._queue_count_var.set(f"{len(display_df)} remaining")
+
+    def _sync_table_to_queue(self):
+        self._syncing_table = True
+        try:
+            current_id = str(self._selected_statement_item.StatementItemId)
+            for item_id in self._queue_table.get_children():
+                vals = self._queue_table.item(item_id)["values"]
+                if str(vals[0]).upper() == current_id.upper():
+                    self._queue_table.selection_set(item_id)
+                    self._queue_table.see(item_id)
+                    break
+        finally:
+            self._syncing_table = False
+
+    def _handle_queue_table_select(self, event=None):
+        if self._syncing_table:
+            return
+        row = self._queue_table.get_selected_row()
+        if row is None:
+            return
+        selected_id = row["StatementItemId"]
+        if str(selected_id) == str(self._selected_statement_item.StatementItemId):
+            return
+        self._selected_statement_item = StatementItem(selected_id)
+        self._refresh_statement_item_card()
+        self._selected_invoice = None
+        self._clear_invoice_card_slot()
+
+    # ── Invoice search ────────────────────────────────────────
 
     def v_Invoice(self):
         df = data.v_Invoice()
@@ -69,7 +141,6 @@ class StatementItemInvoiceReceiptLinker(Modal):
 
         def _on_search_change(_):
             state = invoice_search_form.get()
-
 
             matches = search(
                 df=self.v_Invoice(),
@@ -143,5 +214,20 @@ class StatementItemInvoiceReceiptLinker(Modal):
         with get_connection("ldr") as conn:
             data.update_statement_item_invoice_id(conn, invoice.InvoiceId, item.StatementItemId)
 
-        messagebox.showinfo("Linked", f"Successfully linked statement item to the invoice.")
-        self._close_callback()
+        messagebox.showinfo("Linked", "Successfully linked statement item to the invoice.")
+
+        self._queue_df = self._queue_df[
+            self._queue_df["StatementItemId"].astype(str) != str(item.StatementItemId)
+        ]
+
+        if self._queue_df.empty:
+            self._close_callback()
+            return
+
+        next_id = self._queue_df.iloc[0]["StatementItemId"]
+        self._selected_statement_item = StatementItem(next_id)
+        self._selected_invoice = None
+        self._clear_invoice_card_slot()
+        self._refresh_statement_item_card()
+        self._refresh_queue_table()
+        self._sync_table_to_queue()

@@ -61,13 +61,14 @@ class StatementItemEditor(Modal):
     def _prefill(self):
         item = self._item
         method_display_name = data.get_method_display_name(self._statement_item_id)
+        amount = str(item.Amount).replace(item.CurrencySymbol, '') if item.Amount and item.CurrencySymbol else item.Amount
         self.statement_item_form.set({
             "payee":            item.PayeeName,
             "method":           method_display_name,
             "transaction_date": item.TransactionDate,
             "post_date":        item.PostDate,
             "reference_number": item.ReferenceNumber,
-            "amount":           item.Amount,
+            "amount":           amount,
             "description":      item.StatementItemDescription,
         })
         self._load_image_viewer(item.ImageFileName)
