@@ -1,0 +1,1 @@
+SELECT *, 'EXEC p_ClearStatementItemImage '+QUOTENAME(StatementItemId, '''') FROM v_STatementItem WHERE UPPER(Description) LIKE '%SQ%*%' AND ISNULL(ImageId, dbo.NULL_IMAGE()) = dbo.NULL_IMAGE() ORDER BY MethodDisplayName
