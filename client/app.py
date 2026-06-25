@@ -14,6 +14,7 @@ from tools.invoice_item_category_manager import InvoiceItemCategoryManager
 from tools.image_uploader import ImageUploader
 from tools.invoice_template_creator import InvoiceTemplateCreator
 from tools.data_fix_logger import DataFixLogger
+from tools.statement_item_search import StatementItemSearch
 
 class App(tk.Tk):
 
@@ -43,6 +44,7 @@ class App(tk.Tk):
         statement_menu = tk.Menu(menubar, tearoff=0)
         statement_menu.add_command(label="Create", command=lambda: StatementLoader(self))
         statement_menu.add_command(label="View & Edit", command=lambda: StatementViewer(self))
+        statement_menu.add_command(label="Search Items", command=lambda: StatementItemSearch(self))
         menubar.add_cascade(label="Statement", menu=statement_menu)
 
         organization_menu = tk.Menu(menubar, tearoff=0)
