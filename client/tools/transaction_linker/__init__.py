@@ -5,33 +5,29 @@ from .statement_item_invoice_linker import StatementItemInvoiceReceiptLinker
 from .transaction_completion_linker import TransactionCompletionLinker
 
 class StatementItemInvoiceLinker(Tool):
-    
+
     def __init__(self, master):
         super().__init__(master, title='Statement Item / Invoice Linking Tool')
         self._open_tool()
-        
-    @property
-    def statement_item(self):
+
+    def _open_tool(self):
         items = data.v_StatementItemLinkable()
         if len(items) == 0:
             self.close()
-            return StatementItem("")
-        statement_item_id = items.iloc[0]["StatementItemId"]
-        return StatementItem(statement_item_id)
-    
-    def _open_tool(self):
+            return
 
-        match self.statement_item.ImageContentType:
+        receipt_items = items[items["ContentType"] == "RECEIPT"]
+        transaction_items = items[items["ContentType"] == "TRANSACTION"]
 
-            case 'RECEIPT':
-                self.tool = StatementItemInvoiceReceiptLinker(self, self.statement_item, self._close_tool)
+        if not receipt_items.empty:
+            first_item = StatementItem(receipt_items.iloc[0]["StatementItemId"])
+            self.tool = StatementItemInvoiceReceiptLinker(self, first_item, receipt_items, self._close_tool)
+        elif not transaction_items.empty:
+            first_item = StatementItem(transaction_items.iloc[0]["StatementItemId"])
+            self.tool = TransactionCompletionLinker(self, first_item, self._close_tool)
+        else:
+            self.close()
 
-            case 'TRANSACTION':
-                self.tool = TransactionCompletionLinker(self, self.statement_item, self._close_tool)
-
-            case _:
-                self.tool = None
-        
     def _close_tool(self):
         self.tool.close()
         self.tool.destroy()
