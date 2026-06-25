@@ -1,0 +1,7 @@
+CREATE TABLE [DataFix] (
+    [DataFixId] UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
+    [DataFixDescription] NVARCHAR(MAX) NOT NULL,
+    [Statement] NVARCHAR(MAX) NULL,
+    [IsUpdated] BIT NULL,
+    CONSTRAINT PK_DataFix PRIMARY KEY CLUSTERED ([DataFixId])
+);

@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from functools import cached_property
 from pathlib import Path
+import uuid
 
 from db import get_connection
 from gui import Modal, ImageViewer
@@ -15,25 +16,40 @@ from tools._ui_components.image_selector import ImageSelector
 
 class StatementItemEditor(Modal):
 
-    def __init__(self, master: tk.Tk, statement_item_id: str):
+    def __init__(self, master: tk.Tk, statement_item_id: str = None, statement_id: str = None, account_id: str = None, on_save: callable = None):
         super().__init__(master, is_fullscreen=True)
-        self._statement_item_id = statement_item_id
-        self._item = StatementItem(statement_item_id)
-        self._pending_image_id: str | None = self._item.ImageId
+        self._on_save = on_save
+        self._account_id = account_id
+
+        if statement_item_id:
+            self._mode = "edit"
+            self._statement_item_id = statement_item_id
+            self._item = StatementItem(statement_item_id)
+            self._pending_image_id: str | None = self._item.ImageId
+        else:
+            self._mode = "create"
+            self._statement_id = statement_id
+            self._statement_item_id = str(uuid.uuid4()).upper()
+            self._item = None
+            self._pending_image_id: str | None = None
+
         self._image_viewer: ImageViewer | None = None
 
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(1, weight=1)
 
         self._build_ui()
-        self._prefill()
+        self._filter_methods_by_account()
+        if self._mode == "edit":
+            self._prefill()
 
     # ------------------------------------------------------------------
     # Layout
     # ------------------------------------------------------------------
 
     def _build_ui(self):
-        ttk.Label(self, text="Edit Statement Item", style='Heading.TLabel').grid(
+        heading = "Edit Statement Item" if self._mode == "edit" else "Add Statement Item"
+        ttk.Label(self, text=heading, style='Heading.TLabel').grid(
             row=0, column=0, columnspan=2, padx=10, pady=10, sticky="w"
         )
         self.statement_item_form.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="nw")
@@ -55,6 +71,14 @@ class StatementItemEditor(Modal):
             "description":      item.StatementItemDescription,
         })
         self._load_image_viewer(item.ImageFileName)
+
+    def _filter_methods_by_account(self):
+        if not self._account_id:
+            return
+        methods = data.v_Method()
+        account_methods = methods[methods["AccountId"].str.upper() == self._account_id.upper()]["MethodDisplayName"].tolist()
+        self.statement_item_form.method_widget.configure(values=account_methods)
+        self.statement_item_form.method_widget._all_values = account_methods
 
     # ------------------------------------------------------------------
     # Cached properties — core widgets
@@ -80,13 +104,18 @@ class StatementItemEditor(Modal):
         self._image_viewer = ImageViewer(lf, show_nav_buttons=False)
         self._image_viewer.grid(row=0, column=0, columnspan=2, sticky="nsew")
 
-        self._image_name_var = tk.StringVar(value=self._item.ImageFileName or "No image assigned")
+        image_filename = self._item.ImageFileName if self._item else None
+        self._image_name_var = tk.StringVar(value=image_filename or "No image assigned")
         ttk.Label(lf, textvariable=self._image_name_var, wraplength=220, justify="left").grid(
             row=1, column=0, sticky="w", pady=(6, 4)
         )
         ttk.Button(lf, text="Change Image", command=self._change_image).grid(
             row=2, column=0, sticky="w"
         )
+
+        if self._mode == "edit":
+            self._load_image_viewer(image_filename)
+
         return lf
 
     # ------------------------------------------------------------------
@@ -124,15 +153,21 @@ class StatementItemEditor(Modal):
         if not form['payee']:
             messagebox.showerror("Missing payee", "Please specify a payee.")
             return
+        if not form['method']:
+            messagebox.showerror("Missing method", "Please specify a method.")
+            return
         if not form['transaction_date']:
             messagebox.showerror("Missing date", "Please specify the transaction date.")
+            return
+        if not form['post_date']:
+            messagebox.showerror("Missing post date", "Please specify the post date.")
             return
         if not form['amount']:
             messagebox.showerror("Missing amount", "Please specify the amount.")
             return
 
         payee_id = data.get_payee_id(form['payee'])
-        method_id = data.get_method_id(form['method']) if form['method'] else None
+        method_id = data.get_method_id(form['method'])
 
         item_data = {
             "StatementItemId": self._statement_item_id,
@@ -148,8 +183,15 @@ class StatementItemEditor(Modal):
 
         try:
             with get_connection("ldr") as conn:
-                data.update_statement_item(conn, item_data)
-            messagebox.showinfo("Saved", "Statement item updated successfully.")
+                if self._mode == "edit":
+                    data.update_statement_item(conn, item_data)
+                    messagebox.showinfo("Saved", "Statement item updated successfully.")
+                else:
+                    item_data["StatementId"] = self._statement_id
+                    data.insert_statement_item(conn, item_data)
+                    messagebox.showinfo("Saved", "Statement item added successfully.")
+            if callable(self._on_save):
+                self._on_save()
             self.close()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to save: {str(e)}")

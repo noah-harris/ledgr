@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 import pandas as pd
 from sqlalchemy import text
 from db import get_connection
@@ -18,7 +18,8 @@ class StatementViewer(Tool):
 
         self.grid_rowconfigure(0, weight=0)  # combobox header
         self.grid_rowconfigure(1, weight=0)  # statement table (fixed, 1 row)
-        self.grid_rowconfigure(2, weight=1)  # statement item table (expands)
+        self.grid_rowconfigure(2, weight=0)  # button bar
+        self.grid_rowconfigure(3, weight=1)  # statement item table (expands)
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=2)
@@ -30,6 +31,7 @@ class StatementViewer(Tool):
         self.combobox_frame
         self.account_combobox
         self.statement_combobox
+        self.button_frame
         self.statement_item_table
         self.statement_table
         self.image_viewer
@@ -66,7 +68,16 @@ class StatementViewer(Tool):
         statement_item_id = row.get("StatementItemId")
         if not statement_item_id:
             return
-        StatementItemEditor(self, str(statement_item_id).upper())
+        StatementItemEditor(self, statement_item_id=str(statement_item_id).upper(), account_id=str(self.account_id).upper(), on_save=self._refresh_statement_items)
+
+    def _handle_add_item(self):
+        if self.statement_id is None:
+            messagebox.showwarning("No statement", "Please select a statement first.")
+            return
+        StatementItemEditor(self, statement_id=str(self.statement_id).upper(), account_id=str(self.account_id).upper(), on_save=self._refresh_statement_items)
+
+    def _refresh_statement_items(self):
+        self.statement_item_table.data = self.statement_item_data
 
     def _handle_statement_selection(self, event):
         if self.account_id is None or self.statement_id is None:
@@ -89,7 +100,7 @@ class StatementViewer(Tool):
     @cached_property
     def image_viewer(self):
         img = ImageViewer(self, show_nav_buttons=False)
-        img.grid(row=0, column=1, rowspan=3, sticky="nsew", padx=10, pady=10)
+        img.grid(row=0, column=1, rowspan=4, sticky="nsew", padx=10, pady=10)
         return img
 
     @cached_property
@@ -146,6 +157,13 @@ class StatementViewer(Tool):
         return statement_table
 
     @cached_property
+    def button_frame(self):
+        frame = ttk.Frame(self)
+        frame.grid(row=2, column=0, padx=10, sticky="w")
+        ttk.Button(frame, text="Add Item", command=self._handle_add_item).grid(row=0, column=0)
+        return frame
+
+    @cached_property
     def statement_item_table(self):
         columns = {
             "Payee": {}, "Method": {}, "Transaction Date": {}, "Post Date": {},
@@ -153,7 +171,7 @@ class StatementViewer(Tool):
             "StatementItemId": {"is_hidden": True},
         }
         statement_item_table = Table(self, columns=columns)
-        statement_item_table.grid(row=2, column=0, padx=10, pady=10, sticky="nsew")
+        statement_item_table.grid(row=3, column=0, padx=10, pady=10, sticky="nsew")
         statement_item_table.configure(height=50)
         return statement_item_table
 

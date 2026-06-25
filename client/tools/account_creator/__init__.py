@@ -128,8 +128,8 @@ class _AccountsTab(ttk.Frame):
         type_name    = form_data.get("account_type", "").strip()
         account_num  = form_data.get("account_number", "").strip()
         currency     = form_data.get("currency", "").strip()
-        start_date   = form_data.get("start_date", "").strip()
-        end_date     = form_data.get("end_date", "").strip()
+        start_date   = form_data.get("start_date").strftime("%Y-%m-%d") if form_data.get("start_date") else None
+        end_date     = form_data.get("end_date").strftime("%Y-%m-%d") if form_data.get("end_date") else None
         description  = form_data.get("description", "").strip() or None
 
         if not full_name:

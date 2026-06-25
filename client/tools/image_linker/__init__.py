@@ -54,7 +54,7 @@ class ImageLinker(Tool):
         for record in queue:
             filename = record["ImageFileName"]
             filename = filename.replace("#", "%23")
-            filename = filename.replace(",", "")
+            filename = filename.replace(",", "%2C")
             if filename:
                 record["filetype"] = Path(filename).suffix.lstrip(".")
                 record["filename_stem"] = Path(filename).stem

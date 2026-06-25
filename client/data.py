@@ -57,6 +57,24 @@ def update_statement_item(conn: engine.Connection, item: dict):
         raise e
 
 
+def insert_statement_item(conn: engine.Connection, item: dict):
+    try:
+        conn.execute(text("""
+            INSERT INTO [StatementItem] (
+                [StatementId], [StatementItemId], [MethodId], [PayeeId],
+                [TransactionDate], [PostDate], [ReferenceNumber],
+                [Amount], [Description], [ImageId]
+            ) VALUES (
+                :StatementId, :StatementItemId, :MethodId, :PayeeId,
+                :TransactionDate, :PostDate, :ReferenceNumber,
+                :Amount, :Description, :ImageId
+            )
+        """), item)
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to insert statement item: {str(e)}")
+        raise e
+
+
 # SELECT DATA
 def Invoice() -> pd.DataFrame:
     with get_connection("ldr") as conn:
@@ -149,7 +167,7 @@ def UnmatchedImages() -> pd.DataFrame:
                 [ContentType],
                 [ImageFileName]
             FROM [v_Image] 
-            WHERE [StatusType] ='u'
+            WHERE [StatusType] ='u' AND [FileName] <> 'noimage'
         """, conn)
     return queue
 
