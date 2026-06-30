@@ -40,6 +40,24 @@ services:
       - restore:/app/restore
       - sql-scripts:/app/sql-scripts
 
+  api:
+      build:
+        context: ./api
+        dockerfile: Dockerfile
+      ports:
+        - "8001:8000"
+      depends_on:
+        db:
+          condition: service_healthy
+      environment:
+        HOST: ${HOST}
+        DB_USERNAME: ${DB_USERNAME}
+        DB_PASSWORD: ${DB_PASSWORD}
+        EXTERNAL_PORT: ${EXTERNAL_PORT}
+        INTERNAL_PORT: ${INTERNAL_PORT}
+        DIALECT: ${DIALECT}
+        IMAGE_DIRECTORY: ${IMAGE_DIRECTORY}
+
 volumes:
   restore:
     driver: local

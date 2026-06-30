@@ -4,3 +4,5 @@ pyodbc
 colorlog
 python-dotenv
 requests
+fastapi
+pydantic

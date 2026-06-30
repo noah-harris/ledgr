@@ -1,0 +1,18 @@
+    #"Invoked Custom Function" = Table.AddColumn(END, "fxFlipSign", each fxFlipSign([Additions])),
+    #"Invoked Custom Function1" = Table.AddColumn(#"Invoked Custom Function", "Amount", each fxIsNull([fxFlipSign], [Subtractions])),
+    #"Removed Columns" = Table.RemoveColumns(#"Invoked Custom Function1",{"Additions", "Subtractions", "fxFlipSign"}),
+    #"Invoked Custom Function2" = Table.AddColumn(#"Removed Columns", "fxFormatWhiteSpace", each fxFormatWhiteSpace([Description])),
+    #"Removed Columns1" = Table.RemoveColumns(#"Invoked Custom Function2",{"Description"}),
+    #"Invoked Custom Function3" = Table.AddColumn(#"Removed Columns1", "PostDate", each fxAddYear([Date], 2026)),
+    #"Removed Columns2" = Table.RemoveColumns(#"Invoked Custom Function3",{"Date"}),
+    #"Changed Type2" = Table.TransformColumnTypes(#"Removed Columns2",{{"PostDate", type date}, {"Amount", Currency.Type}}),
+    #"Invoked Custom Function4" = Table.AddColumn(#"Changed Type2", "TransactionDate", each fxExtractDateAfterOn([fxFormatWhiteSpace], 2026, [PostDate])),
+    #"Changed Type3" = Table.TransformColumnTypes(#"Invoked Custom Function4",{{"TransactionDate", type datetime}}),
+    #"Invoked Custom Function5" = Table.AddColumn(#"Changed Type3", "ReferenceNumber", each fxExtractRefNo([fxFormatWhiteSpace])),
+    #"Changed Type4" = Table.TransformColumnTypes(#"Invoked Custom Function5",{{"fxFormatWhiteSpace", type text}}),
+    #"Renamed Columns" = Table.RenameColumns(#"Changed Type4",{{"fxFormatWhiteSpace", "Description"}}),
+    #"Reordered Columns" = Table.ReorderColumns(#"Renamed Columns",{"PostDate", "TransactionDate", "ReferenceNumber", "Description", "Amount"}),
+    #"Changed Type5" = Table.TransformColumnTypes(#"Reordered Columns",{{"ReferenceNumber", type text}}),
+    #"Reordered Columns1" = Table.ReorderColumns(#"Changed Type5",{"TransactionDate", "PostDate", "ReferenceNumber", "Description", "Amount"})
+in
+    #"Reordered Columns1"
